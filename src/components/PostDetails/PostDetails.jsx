@@ -44,9 +44,9 @@ const Post = () => {
 
   if (isLoading) {
     return (
- 
-        <LoadingBars animator={true} size={1} speed={6}/>
-  
+      <>
+      <LoadingBars animator={true} size={1} speed={6}/>
+      </>
     );
   }
 
@@ -54,6 +54,9 @@ const Post = () => {
 
   return (
     <>
+        <div style={{marginLeft: "20px"}}>
+      <Text as="h1">{post.title}</Text>
+      </div>
     <FrameCorners
    
     animator={true}
@@ -61,7 +64,6 @@ const Post = () => {
 
     style={{ padding: '20px', borderRadius: '15px', FontFamily: "serif", backgroundColor: "transparent"}} elevation={6}
   >
- <Text style={{marginTop: "20px"}} as="h1">{post.title}</Text>
        
       <div className={classes.card}>
         <div style={{minWidth: "50%"}} className={classes.section}>

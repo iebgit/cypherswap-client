@@ -581,9 +581,12 @@ const Swap = ({ web3 }) => {
     return null;
   };
   return (
-    <><div className="grid grid-cols-1 justify-center">
+    <>
+    <div style={{marginLeft: "50px"}}>
+      <Text animator={{ animate: false }} as="h1">Swap</Text>
+      </div>
+    <div className="grid grid-cols-1 justify-center">
       <div className="col-span-1">
-<br/><br/><br/>
       <FrameCorners
        palette={
          typeof window.ethereum === "undefined" ||
