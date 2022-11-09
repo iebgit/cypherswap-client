@@ -1,0 +1,7 @@
+.input-file input[type="file" i]::-webkit-file-upload-button{
+    color: "white";
+}
+
+Button {
+    display: "none";
+}

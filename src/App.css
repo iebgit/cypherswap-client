@@ -1,0 +1,111 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+input {
+  border-radius: 0;
+}
+
+input[type="search"] {
+  -webkit-appearance: none;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media only screen and (max-height: 600px) {
+  .footer-style {
+    display: none;
+  }
+}
+.window-positioner {
+  height: 20px;
+}
+@media only screen and (min-height: 600px) {
+  .window-positioner {
+    height: 40px;
+  }
+}
+
+@media only screen and (min-height: 900px) {
+  .window-positioner {
+    height: 100px;
+  }
+}
+
+@media only screen and (min-height: 1200px) {
+  .window-positioner {
+    height: 200px;
+  }
+}
+
+.load-positioner {
+  height: 100px;
+}
+@media only screen and (min-height: 600px) {
+  .load-positioner {
+    height: 200px;
+  }
+}
+
+@media only screen and (min-height: 900px) {
+  .load-positioner {
+    height: 300px;
+  }
+}
+
+@media only screen and (min-height: 1200px) {
+  .load-positioner {
+    height: 500px;
+  }
+}
+
+.loader {
+  border: 16px solid #f3f3f3; /* Light grey */
+  border-top: 16px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

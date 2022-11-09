@@ -1,0 +1,238 @@
+.App-span {
+  all: initial !important;
+}
+.App-align-left {
+  text-align: left;
+}
+.App-align-right {
+  text-align: end;
+}
+
+.App-offcanvas {
+  background-color: #282c34;
+}
+
+.App-modal {
+  background-color: none;
+  padding: 10%;
+  color: #282c34;
+}
+.mr-5 {
+  margin-right: 1.25rem/* 20px */;
+}
+.bg-color {
+  background-color: #282c34;
+}
+.cursor-pointer {
+  cursor: pointer;
+}
+.padded {
+  padding: 20px;
+}
+
+.border0 {
+  border: 1px solid rgb(114, 114, 114);
+  border-radius: 5px;
+}
+.col-span-1 {
+  grid-column: span 1 / span 1;
+}
+.w-4 {
+  width: 1rem/* 16px */;
+}
+
+.App {
+  text-align: center;
+}
+.h-4 {
+  height: 1rem/* 16px */;
+}
+.col-span-1 {
+  grid-column: span 1 / span 1;
+}
+
+.App-abyss {
+  height: 150px;
+}
+
+.App-play-img {
+  max-height: 20px;
+  max-width: 20px;
+}
+
+.App-play-col {
+  padding: 15px;
+}
+.App-flex {
+  display: flex;
+  text-align: start;
+}
+
+.App-pointer {
+  cursor: pointer;
+}
+
+.App-banner {
+  white-space: nowrap;
+}
+.App-banner-img {
+  margin: 10px;
+  max-height: 45px;
+  max-width: 120px;
+}
+
+.App-margin-left {
+  margin-left: 30px;
+}
+
+.App-margin-top0 {
+  margin-top: 10px;
+}
+.App-margin-top1 {
+  margin-top: 20px;
+}
+
+.App-color {
+  color: #61dafb;
+}
+
+.App-color-white {
+  color: white;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.App-link:hover {
+  text-decoration: underline;
+  color: white !important;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.App-inv-col {
+  display: none;
+}
+.image-sizing {
+  max-width: 100%;
+  border: 1px solid rgb(114, 114, 114);
+  border-radius: 5px;
+}
+.container-sizing {
+  width: 50%;
+}
+
+.p1 {
+  font-family: "Times New Roman", Times, serif;
+}
+/***** small size window *****/
+@media (max-width: 768px) {
+  .ticker-col {
+    display: none;
+  }
+  .App-inv-col {
+    display: flex;
+  }
+}
+
+@media (max-width: 768px) {
+  .ticker-col {
+    display: none;
+  }
+}
+/***** medium size window *****/
+@media (min-width: 992px) and (max-width: 1199px) {
+}
+
+.dropdown-btn {
+  padding: 10px;
+}
+
+.img0 {
+  cursor: pointer;
+  background-color: none;
+  height: 40px;
+  width: 40px;
+  transition: 0.5s;
+}
+
+.link {
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.mr-5 {
+  margin-right: 1.25rem/* 20px */;
+}
+.mr-36 {
+  margin-right: 9rem/* 144px */;
+}
+.grid {
+  display: grid;
+}
+.hover\:text-orange-600:hover {
+  --tw-text-opacity: 1;
+  color: rgb(234 88 12 / var(--tw-text-opacity));
+}
+.grid-cols-6 {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+.link:hover {
+  color: white !important;
+}
+.hover\:text-white:hover {
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+.col-span-5 {
+  grid-column: span 5 / span 5;
+}
+.col-span-1 {
+  grid-column: span 1 / span 1;
+}
+.dropdown-img {
+  cursor: pointer;
+  height: 30px;
+  width: 30px;
+}
+
+.img1 {
+  margin-top: 10px;
+  cursor: pointer;
+  height: 40px;
+  width: 40px;
+  transition: 0.3s;
+}
+
+.img0:hover {
+  transform: scale(1.05);
+}
+
+.img1:hover {
+  background-color: white !important;
+}
