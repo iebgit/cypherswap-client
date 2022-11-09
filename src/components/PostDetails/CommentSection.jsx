@@ -20,8 +20,9 @@ const CommentSection = ({ post }) => {
   const [comments, setComments] = useState(post?.comments);
   const classes = useStyles();
   const commentsRef = useRef();
+
   const handleComment = async () => {
-  const newComments = await dispatch(commentPost(`${user?.result?.name}: ${comment}`, post._id));
+    const newComments = await dispatch(commentPost(`${user?.result?.name}: ${comment}`, post._id));
     setComment('');
     setComments(newComments);
     scrollToBottom()
@@ -39,7 +40,7 @@ const CommentSection = ({ post }) => {
 
 
 
-function scrollToBottom() {
+const scrollToBottom = () => {
   const messages = document.getElementById('messages');
   messages.scrollTop = messages.scrollHeight;
 }

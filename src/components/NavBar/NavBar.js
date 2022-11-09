@@ -53,6 +53,7 @@ const Navbar = () => {
   }, [location]);
 
   return (
+    <>
     <AppBar className={classes.appBar} position="static" color="inherit">
         <Toolbar className={classes.toolbar}>
       <Link to="/home" className={classes.brandContainer} onClick={()=>toHome()}>
@@ -97,7 +98,10 @@ const Navbar = () => {
             </Link>
         )}
       </Toolbar>
+     
     </AppBar>
+     <hr/>
+     </>
   );
 };
 

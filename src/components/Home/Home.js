@@ -4,10 +4,11 @@ import { useDispatch } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ChipInput from 'material-ui-chip-input';
 import {
-  Button, 
+  Text,
+  Button,
   FramePentagon,
   FrameCorners,
-  FrameBox,} from '@arwes/core'
+  FrameBox} from '@arwes/core';
 import { getPostsBySearch } from '../../actions/posts';
 import Posts from '../Posts/Posts';
 import Form from '../Form/Form';
@@ -51,12 +52,18 @@ const Home = () => {
 
   return (
     <Grow in>
-      <Container maxWidth="xl">
-        <Grid container justifyContent="space-between" alignItems="stretch" spacing={3} className={classes.gridContainer}>
-          <Grid item xs={12} sm={6} md={9}>
+      
+      <Container>
+      <div style={{marginLeft: "20px"}}>
+      <Text as="h1">{search ? search : tags.length ? tags[0]:'Home' }</Text>
+      </div>
+        <Grid container justifyContent="space-between" alignItems="stretch" spacing={2} className={classes.gridContainer}>
+          <Grid item xs={12} sm={5} md={8}>
             <Posts setCurrentId={setCurrentId} />
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={12} sm={4} md={3}>
+          <Form currentId={currentId} setCurrentId={setCurrentId} />
+          <p/>
             <FrameCorners
             palette="primary"
             animator={true}
@@ -65,7 +72,7 @@ const Home = () => {
             style={{minWidth: "280px"}}
             className={classes.appBarSearch}
           >
-              <input placeholder='Seach Posts' onKeyDown={handleKeyPress} name="search" variant="outlined" label="Search Memories" fullWidth value={search} onChange={(e) => setSearch(e.target.value)} />
+              <input placeholder='Search Posts' onKeyDown={handleKeyPress} name="search" variant="outlined" label="Search Memories" fullWidth value={search} onChange={(e) => setSearch(e.target.value)} />
               <ChipInput
                 style={{ margin: '10px 0' }}
                 value={tags}
@@ -77,7 +84,7 @@ const Home = () => {
               />
               <Button FrameComponent={FramePentagon} palette="secondary" onClick={searchPost} className={classes.searchButton} variant="contained" color="primary">Search</Button>
             </FrameCorners>
-            <Form currentId={currentId} setCurrentId={setCurrentId} />
+        
        
             {(!searchQuery && !tags.length) && (
           
