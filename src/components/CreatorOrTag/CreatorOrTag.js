@@ -43,7 +43,7 @@ const CreatorOrTag = () => {
       <Grid container justifyContent="space-between" alignItems="stretch" className={classes.gridContainer} spacing={3} >
         
           <Grid item xs={12} sm={6} md={7} lg={8}>
-        <Grid container justifyContent="space-between" alignItems="stretch" spacing={2} >
+        <Grid container justifyContent="start" alignItems="stretch" spacing={2} >
           {posts?.map((post) => (
             <Grid key={post._id} item xs={12} sm={12} md={6} lg={4}>
               <Post post={post} setCurrentId={setCurrentId} />
