@@ -58,7 +58,7 @@ const App = () => {
             setWeb3(await getUserData(true));
             window.ethereum.on("message", (msg) => console.message(msg));
             window.ethereum.on("chainChanged", async (msg) => {
-              setWeb3(await getUserData(true));
+              window.location.reload();
             });
             window.ethereum.on("connect", async (msg) => {
               setWeb3(await getUserData(true));

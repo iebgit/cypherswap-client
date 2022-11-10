@@ -185,7 +185,7 @@ const Navbar = ({ web3 }) => {
                   <Button
                     style={{ minHeight: "40px" }}
                     FrameComponent={FramePentagon}
-                    palette="secondary"
+                    palette="primary"
                     animator={true}
                   >
                     <svg

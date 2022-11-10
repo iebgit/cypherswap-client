@@ -14,7 +14,7 @@ import { BleepsProvider, useBleeps } from "@arwes/sounds";
 const customStyles = {
   dropdownIndicator: (provided, state) => ({
     ...provided,
-    transform: state.selectProps.menuIsOpen ? "rotate(0deg)" : "rotate(180deg)",
+    transform: state.selectProps.menuIsOpen ? "rotate(180deg)": "rotate(0deg)",
     transition: "0.2s ease-in-out",
     color: state.selectProps.isDisabled ? "#e24a0f" : "#ffa76c",
     "&:hover": {
@@ -253,7 +253,7 @@ function Metabutton({
               components={{
                 IndicatorSeparator: () => null,
               }}
-              menuPlacement="top"
+              menuPlacement="bottom"
               isOptionDisabled={(option) => option.disabled}
               formatOptionLabel={(network) => (
                 <div
