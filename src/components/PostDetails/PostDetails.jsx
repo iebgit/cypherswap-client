@@ -57,10 +57,8 @@ const Post = () => {
         <div style={{marginLeft: "20px"}}>
       <Text as="h1">{post.title}</Text>
       </div>
-    <FrameCorners
-   
-    animator={true}
-    cornerLength={22}
+    <Card
+  
 
     style={{ padding: '20px', borderRadius: '15px', FontFamily: "serif", backgroundColor: "transparent"}} elevation={6}
   >
@@ -150,7 +148,7 @@ const Post = () => {
      
        
       )}
-         </FrameCorners>
+         </Card>
     </>
   );
 };

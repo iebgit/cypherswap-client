@@ -72,6 +72,7 @@ const getUserData = async (msg) => {
           chainId,
           chainList,
           message: "Error",
+          address: "",
         };
       } else {
         const balance = await signer.getBalance(),
@@ -108,7 +109,7 @@ const getUserData = async (msg) => {
               symbol: network?.tokens[1][3],
             },
           ];
-      
+
         return {
           usDollar,
           pathList,

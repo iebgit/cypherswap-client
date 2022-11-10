@@ -34,6 +34,9 @@ const CommentSection = ({ post }) => {
     const interId = setInterval(async () => {
      console.log("interval")
       setComments(await dispatch(getCommentsById([post._id])))
+      const messages = document.getElementById('messages');
+      messages.scrollTop === messages.scrollHeight ?
+      scrollToBottom() : messages.scrollTop = messages.scrollTop ;
     }, 10000);
     return () => clearInterval(interId)
   }, []);

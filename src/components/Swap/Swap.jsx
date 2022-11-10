@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
-import networks from "./../assets/networks.json";
-import Metabutton from "../../Metabutton";
 import "react-toastify/dist/ReactToastify.css";
 import "./Swap.css";
 import useStyles from "./styles";
@@ -15,7 +13,6 @@ import {
   swapTokens,
   getBalance,
 } from "../services/transactions.service";
-import { BleepsProvider } from "@arwes/sounds";
 import { arrayMax } from "../services/tools.service";
 import {
   getPaths,
@@ -26,16 +23,9 @@ import { ping, tickers } from "../services/gecko.service";
 import Web3 from "web3";
 import Chart from "./Chart";
 import {
-  FONT_FAMILY_ROOT,
-  audioSettings,
-  playersSettings,
-  bleepsSettings,
-  animatorGeneral,
   customStyles,
 } from "../../constants/theme.constants";
 import {
-  ArwesThemeProvider,
-  StylesBaseline,
   Text,
   Button,
   FramePentagon,
@@ -48,13 +38,10 @@ import Paths from "../common/Paths";
 import { TokenStore } from "../../store/TokenStore";
 
 const Swap = ({ web3 }) => {
-  const navigator = useNavigate()
-  const classes = useStyles()
   const [baseAmount, setBaseAmount] = useState(""),
     [tokenData, setTokenData] = useState(null),
     [show, setShow] = useState(false),
     [targetAmount, setTargetAmount] = useState(""),
-    [inputId, setInputId] = useState({ id: null, value: null }),
     [path, setPath] = useState([]),
     [useWeth, setUseWeth] = useState(false),
     [isDisabled, setIsDisabled] = useState(true),
@@ -1121,33 +1108,7 @@ const Swap = ({ web3 }) => {
              address={web3?.address}
            />
            <div className="flex flex-nowrap justify-center h-10">
-             <Metabutton
-               web3={web3}
-               networks={networks}
-               playersSettings={playersSettings}
-               audioSettings={audioSettings}
-               bleepsSettings={bleepsSettings}
-               animatorGeneral={animatorGeneral}
-               FONT_FAMILY_ROOT={FONT_FAMILY_ROOT}
-               isDisabled={isDisabled}
-             />
-             <Button
-               onClick={async () => {
-                 setIsDisabled(true);
-
-                 !!path.length ? await getApproval() : await fetchPaths();
-                 delay(300);
-               }}
-               disabled={isDisabled}
-               FrameComponent={FrameBox}
-               palette="secondary"
-               animator={false}
-               className="h-10 w-28"
-             >
-               {" "}
-               <Text>{btnLabel}</Text>
-             </Button>
-             <Button
+                         <Button
                disabled={isDisabled}
                onClick={() => {
                  setBaseAmount("");
@@ -1157,7 +1118,7 @@ const Swap = ({ web3 }) => {
                  setPath([]);
                  delay(300);
                }}
-               FrameComponent={FramePentagon}
+               FrameComponent={FrameBox}
                title="Reset fields and approval."
                palette="secondary"
                animator={false}
@@ -1181,6 +1142,23 @@ const Swap = ({ web3 }) => {
                  <p />
                </div>
              </Button>
+             <Button
+               onClick={async () => {
+                 setIsDisabled(true);
+
+                 !!path.length ? await getApproval() : await fetchPaths();
+                 delay(300);
+               }}
+               disabled={isDisabled}
+               FrameComponent={FramePentagon}
+               palette="secondary"
+               animator={false}
+               className="h-10 w-28"
+             >
+               {" "}
+               <Text>{btnLabel}</Text>
+             </Button>
+
            </div>
          </>
        ) : (

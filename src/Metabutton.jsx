@@ -221,6 +221,7 @@ function Metabutton({
               animator={true}
               onClick={() => window.open("https://metamask.io")}
               className="w-40"
+              style={{minHeight: "40px"}}
             >
               {" "}
               <Text as="a">Install MetaMask</Text>
@@ -233,6 +234,7 @@ function Metabutton({
               animator={true}
               onClick={() => getWeb3()}
               className="w-40"
+              style={{minHeight: "40px"}}
             >
               {" "}
               <Text as="a">Open MetaMask</Text>
