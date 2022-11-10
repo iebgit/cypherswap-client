@@ -60,8 +60,7 @@ const Post = () => {
     <Card
   
 
-    style={{ padding: '20px', borderRadius: '15px', FontFamily: "serif", backgroundColor: "transparent"}} elevation={6}
-  >
+    style={{ padding: '20px', borderRadius: '15px', FontFamily: "serif", backgroundColor: "transparent"}} elevation={6}>
        
       <div className={classes.card}>
         <div style={{minWidth: "50%"}} className={classes.section}>
@@ -99,12 +98,11 @@ const Post = () => {
     
     
       </div>
-      <div style={{margin: "6px"}} >
+    <Text as="h3">Live Chat</Text>
    
-        <CommentSection post={post} />
-        </div>
+      <CommentSection post={post} />
       {!!recommendedPosts.length && (
-      <>
+      <><p/>
               <Text as="h4">You might also like:</Text>
           <hr/>
      

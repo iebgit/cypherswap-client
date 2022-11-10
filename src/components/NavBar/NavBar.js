@@ -67,19 +67,6 @@ const Navbar = ({ web3 }) => {
       <AppBar className={classes.appBar} position="static" color="inherit">
         <Toolbar className={classes.toolbar}>
           <Link
-            to={`/creators/${user?.result.name}`}
-            className={classes.profile}
-            onClick={() => userAccount(user?.result.name)}
-          >
-            <Avatar
-              className={classes.purple}
-              alt={user?.result.name}
-              src={user?.result.imageUrl}
-            >
-              {user?.result.name.charAt(0)}
-            </Avatar>
-          </Link>
-          <Link
             to="/home"
             className={classes.brandContainer}
             onClick={() => toHome()}
@@ -130,6 +117,19 @@ const Navbar = ({ web3 }) => {
         <Toolbar className={classes.toolbar}>
           {user?.result ? (
             <>
+              <Link
+                to={`/creators/${user?.result.name}`}
+                className={classes.profile}
+                onClick={() => userAccount(user?.result.name)}
+              >
+                <Avatar
+                  className={classes.purple}
+                  alt={user?.result.name}
+                  src={user?.result.imageUrl}
+                >
+                  {user?.result.name.charAt(0)}
+                </Avatar>
+              </Link>
               <div style={{ minWidth: "60px" }}>
                 <Metabutton
                   web3={web3}

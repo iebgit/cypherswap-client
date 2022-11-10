@@ -5,7 +5,7 @@ export default makeStyles((theme) => ({
   appBar: {
     backgroundColor: "transparent",
     borderRadius: 15,
-    marginLeft: "30px",
+
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
@@ -39,7 +39,6 @@ export default makeStyles((theme) => ({
     },
   },
   profile: {
-    marginTop: "10px",
     marginRight: "20px",
     [theme.breakpoints.down("sm")]: {
       width: "auto",

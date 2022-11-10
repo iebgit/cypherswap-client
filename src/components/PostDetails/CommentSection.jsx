@@ -49,12 +49,16 @@ const scrollToBottom = () => {
 }
 
   return (
-    <div>
-       <Text as="h3">Live Chat</Text>
-      <hr/>
+        <FrameCorners
+            palette="pimary"
+            animator={true}
+            cornerLength={22}
+            hover
+            style={{minWidth: "100%"}}
+          >
       <div className={classes.commentsOuterContainer}>
 
-        <div id="messages" style={{margin: "20px", padding: "10px", background: "#001313", opacity: "0.7", minWidth: "60%"}} className={classes.commentsInnerContainer}>
+        <div id="messages" style={{margin: "10px", padding: "10px", background: "#001313", opacity: "0.7", minWidth: "66%"}} className={classes.commentsInnerContainer}>
             {comments?.slice(comments.length > 20 ? comments.length - 20: 0).map((c, i) => (
           <div style={{display: "flex", margin: "10px"}} key={i} gutterBottom variant="subtitle1">
             <div style={{display: "flex", marginRight: "4px"}}>
@@ -72,15 +76,18 @@ const scrollToBottom = () => {
           ))}
           <div ref={commentsRef} />
         </div>
-            <div style={{ margin: "32px", marginTop: "5%" }}>
+          <div style={{ marginTop: "5%", marginRight: "5px", minWidth: "25%"}}>
+
               <textarea placeholder='Comment' fullWidth minrows={5} variant="outlined" label="Comment" multiline value={comment} onChange={(e) => setComment(e.target.value)} />
               <br />
               <Button FrameComponent={FramePentagon} palette="secondary" style={{ marginTop: '10px' }} fullWidth disabled={!comment.length} color="primary" variant="contained" onClick={handleComment}>
                 Comment
               </Button>
+
+          
             </div>
           </div>
-    </div>
+    </FrameCorners>
   );
 };
 
