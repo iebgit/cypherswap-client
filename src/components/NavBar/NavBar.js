@@ -142,14 +142,29 @@ const Navbar = ({ web3 }) => {
                   isDisabled={false}
                 />
               </div>
-              <Button
-                style={{ minHeight: "40px" }}
-                FrameComponent={FramePentagon}
-                palette="secondary"
-                onClick={logout}
-              >
-                Logout
-              </Button>
+              <div title="Sign out">
+                <Button
+                  style={{ minHeight: "40px" }}
+                  FrameComponent={FramePentagon}
+                  palette="secondary"
+                  onClick={logout}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={3}
+                    stroke="currentColor"
+                    className="w-4 h-4"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"
+                    />
+                  </svg>
+                </Button>
+              </div>
             </>
           ) : (
             <>
@@ -165,16 +180,31 @@ const Navbar = ({ web3 }) => {
                   isDisabled={false}
                 />
               </div>
-              <Link to="/auth">
-                <Button
-                  style={{ minHeight: "40px" }}
-                  FrameComponent={FramePentagon}
-                  palette="secondary"
-                  animator={true}
-                >
-                  Sign In
-                </Button>
-              </Link>
+              <div title="Sign in">
+                <Link to="/auth">
+                  <Button
+                    style={{ minHeight: "40px" }}
+                    FrameComponent={FramePentagon}
+                    palette="secondary"
+                    animator={true}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={3}
+                      stroke="currentColor"
+                      className="w-4 h-4"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"
+                      />
+                    </svg>
+                  </Button>
+                </Link>
+              </div>
             </>
           )}
         </Toolbar>
