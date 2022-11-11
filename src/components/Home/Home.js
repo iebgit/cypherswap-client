@@ -64,11 +64,11 @@ const Home = () => {
   return (
     <Grow in>
       <Container>
-        <div style={{ marginLeft: "20px" }}>
+        <center>
           <Text as="h1">
             {search ? search : tags.length ? tags[0] : "Home"}
           </Text>
-        </div>
+        </center>
         <Grid
           container
           justifyContent="space-between"

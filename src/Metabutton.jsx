@@ -7,6 +7,7 @@ import {
   FrameBox,
   Button,
 } from "@arwes/core";
+import { getWeb3 } from "./components/services/transactions.service";
 
 import { AnimatorGeneralProvider } from "@arwes/animation";
 import { BleepsProvider, useBleeps } from "@arwes/sounds";
@@ -139,8 +140,10 @@ function Metabutton({
 
   useEffect(() => {
     if (netSwitch !== web3?.chainId) {
+  
       for (let x = 0; x < networks.length; x++) {
         if (web3?.chainId !== netSwitch && networks[x].id === netSwitch) {
+      
           try {
             if (netSwitch === 1) {
               window.ethereum
@@ -191,15 +194,6 @@ function Metabutton({
   //       }
   //     }
   //   }
-  // };
-  const getWeb3 = () => {
-    if (typeof window.ethereum !== "undefined") {
-      console.log("🦊 METAMASK IS INSTALLED!");
-      window.ethereum.request({ method: "eth_requestAccounts" });
-    } else {
-      console.log("🚫 CANNOT ACCCESS METAMASK");
-    }
-  };
 
   return (
     <ArwesThemeProvider>

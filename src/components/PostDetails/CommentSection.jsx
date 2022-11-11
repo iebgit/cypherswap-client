@@ -50,7 +50,7 @@ const scrollToBottom = () => {
 
   return (
         <FrameCorners
-            palette="pimary"
+            palette="primary"
             animator={true}
             cornerLength={22}
             hover
@@ -65,7 +65,7 @@ const scrollToBottom = () => {
               <div style={{marginRight: "4px"}}>
                 <Icons color={`${!!c.split(': ')[0][0] ? c.split(': ')[0][0]: "a"}`} icon={`${!!c.split(': ')[0][1] ? c.split(': ')[0][1]: "a"}`}/>
               </div>
-              <Link to={`/creators/${c.split(': ')[0]}`}><strong style={{color: alphabetColors[`${c.split(': ')[0][0]}`.toLowerCase()], }}>{c.split(': ')[0]}:</strong></Link>
+              <Link to={`/creators/${c.split(': ')[0]}`}><strong style={{color: alphabetColors[`${c.split(': ')[0][0]}`.toLowerCase()], }} className={classes.name}>{c.split(': ')[0]}:</strong></Link>
 
             </div>
             <span style={{color: "white"}}>{c.split(':')[1]}</span>

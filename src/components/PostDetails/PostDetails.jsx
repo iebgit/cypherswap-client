@@ -54,9 +54,9 @@ const Post = () => {
 
   return (
     <>
-        <div style={{marginLeft: "20px"}}>
+        <center>
       <Text as="h1">{post.title}</Text>
-      </div>
+      </center>
     <Card
   
 

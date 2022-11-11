@@ -37,9 +37,9 @@ import networks from "./components/assets/networks.json";
 const App = () => {
   const user = JSON.parse(localStorage.getItem("profile"));
   const [web3, setWeb3] = useState({
-      network: networks[5],
+      network: networks[3],
       networks,
-      chainId: 1,
+      chainId: 137,
       chainList: [1666600000, 1, 250, 43114, 56, 137],
       message: "Loading...",
       address: "",
@@ -56,9 +56,10 @@ const App = () => {
         const addListeners = () => {
           window.addEventListener("load", async (event) => {
             setWeb3(await getUserData(true));
+
             window.ethereum.on("message", (msg) => console.message(msg));
             window.ethereum.on("chainChanged", async (msg) => {
-              window.location.reload();
+              setWeb3(await getUserData(true));
             });
             window.ethereum.on("connect", async (msg) => {
               setWeb3(await getUserData(true));
@@ -146,7 +147,8 @@ const App = () => {
                 />
               </Routes>
             </Container>
-            <Footer />
+
+            <Footer web3={web3} />
           </AnimatorGeneralProvider>
         </BleepsProvider>
       </ArwesThemeProvider>

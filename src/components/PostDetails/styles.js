@@ -51,4 +51,10 @@ export default makeStyles((theme) => ({
     overflowY: "auto",
     marginRight: "30px",
   },
+  name: {
+    textDecoration: "",
+    "&:hover": {
+      textDecoration: "underline",
+    },
+  },
 }));

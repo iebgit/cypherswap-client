@@ -28,6 +28,15 @@ const usDollar = new Intl.NumberFormat("en-US", {
   minimumFractionDigits: 2,
 });
 
+const getWeb3 = () => {
+  if (typeof window.ethereum !== "undefined") {
+    console.log("🦊 METAMASK IS INSTALLED!");
+    window.ethereum.request({ method: "eth_requestAccounts" });
+  } else {
+    console.log("🚫 CANNOT ACCCESS METAMASK");
+  }
+};
+
 const getUserData = async (msg) => {
   let name;
   let network;
@@ -336,4 +345,5 @@ export {
   convertTokens,
   getBalance,
   usDollar,
+  getWeb3,
 };

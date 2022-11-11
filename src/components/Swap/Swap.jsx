@@ -569,9 +569,9 @@ const Swap = ({ web3 }) => {
   };
   return (
     <>
-    <div style={{marginLeft: "50px"}}>
-      <Text animator={{ animate: false }} as="h1">Swap</Text>
-      </div>
+    <center>
+      <Text animator={{ animate: false, justifyContent:"center" }} as="h1">Swap</Text>
+    </center>
     <div className="grid grid-cols-1 justify-center">
       <div className="col-span-1">
       <FrameCorners
@@ -1107,7 +1107,7 @@ const Swap = ({ web3 }) => {
              toggleData={toggleTokenData}
              address={web3?.address}
            />
-           <div className="flex flex-nowrap justify-center h-10">
+           <div className="flex flex-nowrap mb-2 justify-center h-10">
                          <Button
                disabled={isDisabled}
                onClick={() => {
@@ -1171,94 +1171,7 @@ const Swap = ({ web3 }) => {
        )}
 
        <center>
-         <div
-           onClick={() =>
-             typeof window.ethereum === "undefined" ||
-             web3.message === "Error"
-               ? window.location.reload()
-               : null
-           }
-           className="flex flex-nowrap align-center justify-center p-2"
-         >
-           <a
-             href={
-               typeof window.ethereum === "undefined" ||
-               web3.message === "Error"
-                 ? ""
-                 : `${web3.network.explorer}address/${web3.address}`
-             }
-             rel="noreferrer"
-             target="_blank"
-           >
-             <svg
-               xmlns="http://www.w3.org/2000/svg"
-               className={
-                 typeof window.ethereum === "undefined" ||
-                 web3.message === "Error"
-                   ? "hidden"
-                   : isDisabled
-                   ? "h-5 w-5 text-orange-600"
-                   : "h-5 w-5 cursor-pointer"
-               }
-               fill="none"
-               viewBox="0 0 24 24"
-               stroke="currentColor"
-               strokeWidth={2}
-             >
-               <path
-                 strokeLinecap="round"
-                 strokeLinejoin="round"
-                 d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-               />
-             </svg>
-             <svg
-               xmlns="http://www.w3.org/2000/svg"
-               className={
-                 typeof window.ethereum === "undefined" ||
-                 web3.message === "Error"
-                   ? "h-5 w-5"
-                   : "hidden"
-               }
-               fill="none"
-               viewBox="0 0 24 24"
-               stroke="#e24a0f"
-               strokeWidth={2}
-             >
-               <path
-                 strokeLinecap="round"
-                 strokeLinejoin="round"
-                 d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-               />
-             </svg>
-           </a>
-           <a
-             href={
-               typeof window.ethereum === "undefined" ||
-               web3.message === "Error"
-                 ? ""
-                 : `${web3.network.explorer}address/${web3.address}`
-             }
-             rel="noreferrer"
-             target="_blank"
-           >
-             <Text
-               className={
-                 typeof window.ethereum === "undefined" ||
-                 web3.message === "Error"
-                   ? " cursor-pointer font-bold text-sm text-orange-600 hover:text-orange-500 hover:underline"
-                   : isDisabled
-                   ? "font-bold text-sm text-orange-600"
-                   : "cursor-pointer text-sm font-bold "
-               }
-             >
-               &nbsp;
-               {typeof window.ethereum === "undefined" ||
-               web3.message === "Error"
-                 ? "Address Not Found"
-                 : web3.message}
-             </Text>
-           </a>
-         </div>
+       
        </center>
      </FrameCorners>
       </div>
