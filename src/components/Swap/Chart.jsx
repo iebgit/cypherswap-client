@@ -75,7 +75,7 @@ const Chart = ({ data, show, tokenI, usDollar }) => {
         <div className="mt-2 pt-5">
           <LineChart
             width={168}
-            height={160}
+            height={168}
             data={formattedData}
             margin={{ top: 5, right: 5, left: 5, bottom: 0 }}
           >

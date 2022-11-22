@@ -10,6 +10,24 @@ const ping = async () => {
   }
   return status;
 };
+
+const getOhlc = async (id, step) => {
+  let ohlc;
+  try {
+    ohlc = await axios(
+      `https://api.coingecko.com/api/v3/coins/${id}/ohlc?vs_currency=usd&days=max`
+    );
+  } catch (e) {
+    console.error(e);
+  }
+  const filterOhlc = ohlc
+    ? ohlc?.data.filter((v, i) => (i % step ? false : true))
+    : null;
+  const priceList = filterOhlc?.map((v) => v[4]);
+  const last = Math.floor(filterOhlc[filterOhlc.length - 1][0] / 1000);
+  return { priceList, last };
+};
+
 const tokens = async (ids) => {
   let tokensData;
   try {
@@ -21,6 +39,7 @@ const tokens = async (ids) => {
   }
   return tokensData;
 };
+
 const getToken = async (id) => {
   let tokenData;
   try {
@@ -123,4 +142,4 @@ const tickers = async (exchangeId, primaryTokens) => {
   return uniqueArray;
 };
 
-export { ping, tickers, getToken };
+export { ping, tickers, getToken, getOhlc };

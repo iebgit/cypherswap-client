@@ -4,7 +4,6 @@ export default makeStyles((theme) => ({
   media: {
     borderRadius: "20px",
     objectFit: "cover",
-
     backgroundColor: "transparent",
   },
   card: {

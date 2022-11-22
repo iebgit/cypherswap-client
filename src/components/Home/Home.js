@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Grow,
@@ -26,11 +26,12 @@ import useStyles from "./styles";
 function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
-const Home = () => {
+const Home = ({ web3 }) => {
   const classes = useStyles();
   const query = useQuery();
   const page = query.get("page") || 1;
   const searchQuery = query.get("searchQuery");
+  const [title, setTitle] = useState("Home");
 
   const [currentId, setCurrentId] = useState(0);
   const dispatch = useDispatch();
@@ -38,17 +39,45 @@ const Home = () => {
   const [search, setSearch] = useState("");
   const [tags, setTags] = useState([]);
   const navigate = useNavigate();
+  const clearPosts = () => {
+    setSearch("");
+    setTags([]);
+    setTitle("Home");
+    navigate("/home");
+  };
 
   const searchPost = () => {
-    if (search.trim() || tags) {
+    if (search.trim() || tags.length) {
       dispatch(getPostsBySearch({ search, tags: tags.join(",") }));
       navigate(
         `/posts/search?searchQuery=${search || "none"}&tags=${tags.join(",")}`
       );
+
+      setTitle(
+        !!search && tags.length
+          ? `Title: ${search} | Tags: ${
+              tags.length > 1 ? tags.join(", ") : tags[0]
+            }`
+          : !!search
+          ? `Title: ${search}`
+          : tags.length > 1
+          ? `Tags: ${tags.join(", ")}`
+          : tags.length
+          ? `Tags: ${tags[0]}`
+          : "Home"
+      );
     } else {
-      navigate("/");
+      setTitle("Home");
+      navigate("/home");
     }
   };
+
+  useEffect(() => {
+    if (!search && !tags.length) {
+      setTitle("Home");
+      navigate("/home");
+    }
+  }, [search, tags]);
 
   const handleKeyPress = (e) => {
     if (e.keyCode === 13) {
@@ -65,9 +94,7 @@ const Home = () => {
     <Grow in>
       <Container>
         <center>
-          <Text as="h1">
-            {search ? search : tags.length ? tags[0] : "Home"}
-          </Text>
+          <Text as="h1">{title}</Text>
         </center>
         <Grid
           container
@@ -76,20 +103,21 @@ const Home = () => {
           spacing={2}
           className={classes.gridContainer}
         >
-          <Grid item xs={12} sm={5} md={8}>
-            <Posts setCurrentId={setCurrentId} />
+          <Grid item xs={12} sm={7} md={8}>
+            <Posts setCurrentId={setCurrentId} web3={web3} />
           </Grid>
-          <Grid item xs={12} sm={4} md={3}>
-            <Form currentId={currentId} setCurrentId={setCurrentId} />
-            <p />
-            <FrameCorners
-              palette="primary"
-              animator={true}
-              cornerLength={22}
-              hover
-              style={{ minWidth: "280px" }}
-              className={classes.appBarSearch}
+          <Grid item xs={12} sm={5} md={4}>
+            <center
+              style={{
+                width: "360px",
+              }}
             >
+              <Form
+                currentId={currentId}
+                setCurrentId={setCurrentId}
+                web3={web3}
+              />
+              <p />
               <input
                 placeholder="Search Posts"
                 onKeyDown={handleKeyPress}
@@ -100,15 +128,17 @@ const Home = () => {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
-              <ChipInput
-                style={{ margin: "10px 0" }}
-                value={tags}
-                onAdd={(chip) => handleAddChip(chip)}
-                onDelete={(chip) => handleDeleteChip(chip)}
-                label="Search Tags"
-                fullWidth
-                variant="standard"
-              />
+              <p />
+              <Button
+                FrameComponent={FrameBox}
+                palette="secondary"
+                onClick={clearPosts}
+                className={classes.searchButton}
+                variant="contained"
+                color="primary"
+              >
+                clear
+              </Button>
               <Button
                 FrameComponent={FramePentagon}
                 palette="secondary"
@@ -119,7 +149,7 @@ const Home = () => {
               >
                 Search
               </Button>
-            </FrameCorners>
+            </center>
 
             {!searchQuery && !tags.length && <Pagination page={page} />}
           </Grid>

@@ -1,3 +1,360 @@
+:root {
+    --toastify-color-light: #fff;
+    --toastify-color-dark: #121212;
+    --toastify-color-info: #3498db;
+    --toastify-color-success: #7efcf6 !important;
+    --toastify-color-warning: #f1c40f;
+    --toastify-color-error: #e24a0f !important;
+    --toastify-color-transparent: rgba(255, 255, 255, 0.7);
+    --toastify-icon-color-info: #e24a0f;
+    --toastify-icon-color-success: var(--toastify-color-success);
+    --toastify-icon-color-warning: var(--toastify-color-warning);
+    --toastify-icon-color-error: var(--toastify-color-error);
+    --toastify-toast-width: 320px;
+    --toastify-toast-background: #fff;
+    --toastify-toast-min-height: 64px;
+    --toastify-toast-max-height: 800px;
+    --toastify-font-family: "Titillium Web";
+    --toastify-z-index: 9999;
+    --toastify-text-color-light: #ffa76c !important;
+    --toastify-text-color-dark: #ffa76c !important;
+    --toastify-text-color-info: #ffa76c !important;
+    --toastify-text-color-success: #ffa76c !important;
+    --toastify-text-color-warning: #ffa76c !important;
+    --toastify-text-color-error: #e24a0f !important;
+    --toastify-spinner-color: #7efcf6 !important;
+    --toastify-spinner-color-empty-area: #e0e0e0;
+    --toastify-color-progress-light: linear-gradient(to right,
+            #4cd964,
+            #5ac8fa,
+            #007aff,
+            #34aadc,
+            #5856d6,
+            #ff2d55);
+    --toastify-color-progress-dark: #bb86fc;
+    --toastify-color-progress-info: #e24a0f;
+    --toastify-color-progress-success: var(--toastify-color-success);
+    --toastify-color-progress-warning: var(--toastify-color-warning);
+    --toastify-color-progress-error: var(--toastify-color-error);
+}
+
+.hidden {
+    display: none;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.grid {
+    display: grid;
+}
+
+.h-6 {
+    height: 1.5rem
+        /* 24px */
+    ;
+}
+
+.w-6 {
+    width: 1.5rem
+        /* 24px */
+    ;
+}
+
+.w-7 {
+    width: 1.75rem
+        /* 28px */
+    ;
+}
+
+.mt-2 {
+    margin-top: 0.5rem
+        /* 8px */
+    ;
+}
+
+.h-7 {
+    height: 1.75rem
+        /* 28px */
+    ;
+}
+
+.h-5 {
+    height: 1.25rem
+        /* 20px */
+    ;
+}
+
+.h-10 {
+    height: 2.5rem
+        /* 40px */
+    ;
+}
+
+.w-28 {
+    width: 7rem
+        /* 112px */
+    ;
+}
+
+.w-40 {
+    width: 10rem
+        /* 160px */
+    ;
+}
+
+.hover\:border-transparent:hover {
+    border-color: transparent;
+}
+
+.opacity-70 {
+    opacity: 0.7;
+}
+
+.justify-start {
+    justify-content: flex-start;
+}
+
+.grid-cols-8 {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+}
+
+.col-span-6 {
+    grid-column: span 6 / span 6;
+}
+
+.h-6 {
+    height: 1.5rem
+        /* 24px */
+    ;
+}
+
+.pt-5 {
+    padding-top: 1.25rem
+        /* 20px */
+    ;
+}
+
+.hover\:opacity-100:hover {
+    opacity: 1;
+}
+
+.w-36 {
+    width: 9rem
+        /* 144px */
+    ;
+}
+
+.m-1 {
+    margin: 0.25rem
+        /* 4px */
+    ;
+}
+
+.mt-2 {
+    margin-top: 0.5rem
+        /* 8px */
+    ;
+}
+
+.opacity-60 {
+    opacity: 0.6;
+}
+
+.shadow-none {
+    --tw-shadow: 0 0 #0000;
+    --tw-shadow-colored: 0 0 #0000;
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+@media (min-width: 768px) {
+    .md\:ml-0 {
+        margin-left: 0px;
+    }
+}
+
+.text-xl {
+    font-size: 1.25rem
+        /* 20px */
+    ;
+    line-height: 1.75rem
+        /* 28px */
+    ;
+}
+
+.ml-5 {
+    margin-left: 1.25rem
+        /* 20px */
+    ;
+}
+
+.p-2 {
+    padding: 0.5rem
+        /* 8px */
+    ;
+}
+
+.text-sm {
+    font-size: 0.875rem
+        /* 14px */
+    ;
+    line-height: 1.25rem
+        /* 20px */
+    ;
+}
+
+.hover\:underline:hover {
+    text-decoration-line: underline;
+}
+
+.text-xl {
+    font-size: 1.25rem
+        /* 20px */
+    ;
+    line-height: 1.75rem
+        /* 28px */
+    ;
+}
+
+.text-orange-600 {
+    --tw-text-opacity: 1;
+    color: rgb(234 88 12 / var(--tw-text-opacity));
+}
+
+.col-span-1 {
+    grid-column: span 1 / span 1;
+}
+
+.pb-1 {
+    padding-bottom: 0.25rem
+        /* 4px */
+    ;
+}
+
+.mb-2 {
+    margin-bottom: 0.5rem
+        /* 8px */
+    ;
+}
+
+.gap-4 {
+    gap: 1rem
+        /* 16px */
+    ;
+}
+
+.font-bold {
+    font-weight: 700;
+}
+
+.border {
+    border-width: 1px;
+}
+
+.grid-cols-6 {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.gap-4 {
+    gap: 1rem
+        /* 16px */
+    ;
+}
+
+.flex-nowrap {
+    flex-wrap: nowrap;
+}
+
+.disabled\:border-orange-600:disabled {
+    --tw-border-opacity: 1;
+    border-color: rgb(234 88 12 / var(--tw-border-opacity));
+}
+
+.cursor-default {
+    cursor: default;
+}
+
+.duration-200 {
+    transition-duration: 200ms;
+}
+
+.rotate-0 {
+    --tw-rotate: 0deg;
+    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.rotate-180 {
+    --tw-rotate: 180deg;
+    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.transition-transform {
+    transition-property: transform;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+
+.text-xs {
+    font-size: 0.75rem
+        /* 12px */
+    ;
+    line-height: 1rem
+        /* 16px */
+    ;
+}
+
+.h-4 {
+    height: 1rem
+        /* 16px */
+    ;
+}
+
+.w-4 {
+    width: 1rem
+        /* 16px */
+    ;
+}
+
+.m-2 {
+    margin: 0.5rem
+        /* 8px */
+    ;
+}
+
+.mt-1 {
+    margin-top: 0.25rem
+        /* 4px */
+    ;
+}
+
+.ml-2 {
+    margin-left: 0.5rem
+        /* 8px */
+    ;
+}
+
+.disabled\:border-orange-600:disabled {
+    --tw-border-opacity: 1;
+    border-color: rgb(234 88 12 / var(--tw-border-opacity));
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.flex {
+    display: flex;
+}
+
+.opacity-70 {
+    opacity: 0.7;
+}
+
 .input-file input[type="file" i]::-webkit-file-upload-button{
     color: "white";
 }

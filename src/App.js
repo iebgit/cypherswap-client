@@ -10,6 +10,7 @@ import NavBar from "./components/NavBar/NavBar";
 import Home from "./components/Home/Home";
 import Auth from "./components/Auth/Auth";
 import Swap from "./components/Swap/Swap";
+import Create from "./components/Create/Create";
 import Footer from "./components/common/Footer";
 import "./styles/output.css";
 import CreatorOrTag from "./components/CreatorOrTag/CreatorOrTag";
@@ -36,19 +37,8 @@ import {
 import networks from "./components/assets/networks.json";
 const App = () => {
   const user = JSON.parse(localStorage.getItem("profile"));
-  const [web3, setWeb3] = useState({
-      network: networks[3],
-      networks,
-      chainId: 137,
-      chainList: [1666600000, 1, 250, 43114, 56, 137],
-      message: "Loading...",
-      address: "",
-    }),
+  const [web3, setWeb3] = useState(null),
     [showLink, setShowLink] = useState(false);
-  // const navigator = useNavigate()
-  // useEffect(() => {
-  //   navigator("./swap")
-  // }, [web3])
 
   useEffect(() => {
     const getWindowEthereum = async () => {
@@ -56,7 +46,6 @@ const App = () => {
         const addListeners = () => {
           window.addEventListener("load", async (event) => {
             setWeb3(await getUserData(true));
-
             window.ethereum.on("message", (msg) => console.message(msg));
             window.ethereum.on("chainChanged", async (msg) => {
               setWeb3(await getUserData(true));
@@ -65,8 +54,8 @@ const App = () => {
               setWeb3(await getUserData(true));
             });
             window.ethereum.on("disconnect", (msg) => {});
-            window.ethereum.on("accountsChanged", (msg) => {
-              window.location.reload();
+            window.ethereum.on("accountsChanged", async (msg) => {
+              setWeb3(await getUserData(true));
             });
             window.ethereum.on("transactionHash", (hash) => {});
             window.ethereum.on("receipt", function (receipt) {
@@ -111,17 +100,9 @@ const App = () => {
     console.log(web3);
   }, [web3]);
 
-  const getNetwork = (hex) => {
-    console.log(networks);
-  };
   return (
     <BrowserRouter>
       <ArwesThemeProvider>
-        <BleepsProvider
-          audioSettings={audioSettings}
-          playersSettings={playersSettings}
-          bleepsSettings={bleepsSettings}
-        >
           <StylesBaseline
             styles={{
               body: { fontFamily: FONT_FAMILY_ROOT },
@@ -130,27 +111,49 @@ const App = () => {
 
           <AnimatorGeneralProvider animator={animatorGeneral}>
             <Container>
-              <NavBar web3={web3} />
-              <Routes>
-                <Route path="/" exact element={<Home />} />
-                <Route path="/home" exact element={<Home />} />
-                <Route path="/swap" exact element={<Swap web3={web3} />} />
-                <Route path="/posts" exact element={<Home />} />
-                <Route path="/posts/search" exact element={<Home />} />
-                <Route path="/posts/:id" exact element={<PostDetails />} />
-                <Route path="/creators/:name" element={<CreatorOrTag />} />
-                <Route path="/tags/:name" element={<CreatorOrTag />} />
-                <Route
-                  path="/auth"
-                  exact
-                  element={<Auth address={web3.address} />}
-                />
-              </Routes>
+              {!web3 ? (
+                <>
+                  <br />
+                  <LoadingBars animator={true} size={1} speed={6} />
+                </>
+              ) : (
+                <>
+                  <NavBar web3={web3} />
+                  <Routes>
+                    <Route path="/" exact element={<Home web3={web3} />} />
+                    <Route path="/home" exact element={<Home web3={web3} />} />
+                    <Route path="/swap" exact element={<Swap web3={web3} />} />
+                    <Route path="/posts" exact element={<Home web3={web3} />} />
+                    <Route
+                      path="/create"
+                      exact
+                      element={<Create web3={web3} />}
+                    />
+                    <Route
+                      path="/posts/search"
+                      exact
+                      element={<Home web3={web3} />}
+                    />
+                    <Route
+                      path="/posts/:id"
+                      exact
+                      element={<PostDetails web3={web3} />}
+                    />
+                    <Route
+                      path="/creators/:name"
+                      element={<CreatorOrTag web3={web3} />}
+                    />
+                    <Route path="/tags/:name" element={<CreatorOrTag />} />
+                    <Route
+                      path="/auth"
+                      exact
+                      element={<Auth address={web3?.address} />}
+                    />
+                  </Routes>
+                </>
+              )}
             </Container>
-
-            <Footer web3={web3} />
           </AnimatorGeneralProvider>
-        </BleepsProvider>
       </ArwesThemeProvider>
     </BrowserRouter>
   );

@@ -1,62 +1,21 @@
 [
 	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_base",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "_target",
-				"type": "address"
-			},
-			{
-				"internalType": "uint64[][6]",
-				"name": "_fib",
-				"type": "uint64[][6]"
-			},
-			{
-				"internalType": "uint8[5]",
-				"name": "_fibDiv",
-				"type": "uint8[5]"
-			},
-			{
-				"internalType": "uint24",
-				"name": "_poolFee",
-				"type": "uint24"
-			},
-			{
-				"internalType": "uint256[]",
-				"name": "_timeStamps",
-				"type": "uint256[]"
-			},
-			{
-				"internalType": "uint64",
-				"name": "_sma",
-				"type": "uint64"
-			},
-			{
-				"internalType": "bool",
-				"name": "_mode",
-				"type": "bool"
-			}
-		],
-		"name": "createClientStrategy",
-		"outputs": [
-			{
-				"internalType": "contract ClientStrategy",
-				"name": "newStrategy",
-				"type": "address"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"inputs": [],
 		"stateMutability": "nonpayable",
 		"type": "constructor"
+	},
+	{
+		"inputs": [],
+		"name": "balance",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "bal",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
 	},
 	{
 		"inputs": [
@@ -80,16 +39,80 @@
 	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "client",
-				"type": "address"
+				"internalType": "uint64[][2]",
+				"name": "_fib",
+				"type": "uint64[][2]"
+			},
+			{
+				"internalType": "uint8[5]",
+				"name": "_fibDiv",
+				"type": "uint8[5]"
+			},
+			{
+				"internalType": "uint128[20]",
+				"name": "_timeStamps",
+				"type": "uint128[20]"
+			},
+			{
+				"internalType": "uint64",
+				"name": "_sma",
+				"type": "uint64"
+			},
+			{
+				"internalType": "address[]",
+				"name": "_buyPath",
+				"type": "address[]"
+			},
+			{
+				"internalType": "address[]",
+				"name": "_sellPath",
+				"type": "address[]"
 			}
 		],
-		"name": "getClientStrategy",
+		"name": "createClientStrategy",
 		"outputs": [
 			{
 				"internalType": "contract ClientStrategy",
-				"name": "strategy",
+				"name": "newStrategy",
+				"type": "address"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "creator",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getStrategyLength",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "stratagem",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
 				"type": "address"
 			}
 		],

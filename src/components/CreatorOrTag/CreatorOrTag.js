@@ -15,7 +15,8 @@ import Post from "../Posts/Post/Post";
 import { getPostsByCreator, getPostsBySearch } from "../../actions/posts";
 import Form from "../Form/Form";
 import useStyles from "./styles";
-const CreatorOrTag = () => {
+
+const CreatorOrTag = ({ web3 }) => {
   const classes = useStyles();
   const { name } = useParams();
   const dispatch = useDispatch();
@@ -25,12 +26,8 @@ const CreatorOrTag = () => {
   const location = useLocation();
 
   useEffect(() => {
-    if (location.pathname.startsWith("/tags")) {
-      dispatch(getPostsBySearch({ tags: name }));
-    } else {
-      dispatch(getPostsByCreator(name));
-    }
-  }, [dispatch]);
+    dispatch(getPostsByCreator(name));
+  }, [dispatch, name]);
 
   if (!posts.length && !isLoading) return "No posts";
 
@@ -59,13 +56,19 @@ const CreatorOrTag = () => {
               >
                 {posts?.map((post) => (
                   <Grid key={post._id} item xs={12} sm={12} md={6} lg={4}>
-                    <Post post={post} setCurrentId={setCurrentId} />
+                    <Post post={post} setCurrentId={setCurrentId} web3={web3} />
                   </Grid>
                 ))}
               </Grid>
             </Grid>
             <Grid item xs={12} sm={5} md={4} lg={3}>
-              <Form currentId={currentId} setCurrentId={setCurrentId} />
+              <center>
+                <Form
+                  currentId={currentId}
+                  setCurrentId={setCurrentId}
+                  web3={web3}
+                />
+              </center>
             </Grid>
           </Grid>
         )}

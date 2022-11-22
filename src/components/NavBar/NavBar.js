@@ -133,7 +133,7 @@ const Navbar = ({ web3 }) => {
               <div style={{ minWidth: "60px" }}>
                 <Metabutton
                   web3={web3}
-                  networks={web3.networks}
+                  networks={web3?.networks}
                   playersSettings={playersSettings}
                   audioSettings={audioSettings}
                   bleepsSettings={bleepsSettings}

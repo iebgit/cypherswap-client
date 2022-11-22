@@ -1,7 +1,11 @@
+import { path } from "animejs";
+
 const BigNumber = require("bignumber.js");
 const { ethers } = require("ethers");
 const networks = require("./../assets/networks.json");
 const Web3 = require("web3");
+const erc20 = require("./../assets/ERC20.json");
+const { arrayMax } = require("./tools.service.js");
 
 const formatAmountIn = (tokenMultiply, amount) => {
   const tokenAmount = new BigNumber((tokenMultiply * amount).toString());
@@ -22,6 +26,72 @@ const convertTokens = (tokenArray) => {
   return convertedArray;
 };
 
+const getDecimals = async (erc20Address, erc20, signer) => {
+   const erc20Contract = new ethers.Contract(erc20Address, erc20.abi, signer);
+
+   try {
+    return await erc20Contract.decimals();
+  } catch (err) {
+
+  }
+}
+
+const sendEthTransaction = async (to, value, signer) => {
+  const tx = {
+    to,
+    value: ethers.utils.parseEther(value),
+  };
+
+  signer.sendTransaction(tx).then((transaction) => {
+    console.dir(transaction);
+    alert("Send finished!");
+  });
+};
+
+const sendTransaction = async (to, value, erc20Address, signer) => {
+  const erc20Contract = new ethers.Contract(erc20Address, erc20.abi, signer);
+  let decimals
+  try {
+    decimals = await erc20Contract.decimals();
+  }catch(err){console.log(err)}
+
+  const amount = ethers.utils.parseUnits(value, decimals);
+  try {
+    await erc20Contract.transfer(to, amount);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const withdrawTransaction = async (contractAddress, contractAbi, erc20Address, value, signer) => {
+  const erc20Contract = new ethers.Contract(erc20Address, erc20.abi, signer);
+  let decimals
+  try {
+    decimals = await erc20Contract.decimals();
+  }catch(err){console.log(err)}
+  const clientStrategy = new ethers.Contract(contractAddress, contractAbi, signer);
+  const amount = ethers.utils.parseUnits(value, decimals);
+ try {
+    await clientStrategy.withdrawToken(erc20Address, amount);
+  } catch (err) {
+    console.log(err);
+  }
+
+
+} 
+
+const withdrawEthTransaction = async (contractAddress, contractAbi, value, signer) => {
+  const clientStrategy = new ethers.Contract(contractAddress, contractAbi, signer);
+  const amount = ethers.utils.parseEther(value);
+ try {
+    await clientStrategy.withdrawEth(amount);
+  } catch (err) {
+    console.log(err);
+  }
+
+
+} 
+
 const usDollar = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
@@ -35,6 +105,134 @@ const getWeb3 = () => {
   } else {
     console.log("🚫 CANNOT ACCCESS METAMASK");
   }
+};
+
+const getCurrentPrice = async (web3, token) => {
+  let usdcContract,
+    usdcDecimal,
+    usdcMultiply,
+    contract,
+    decimal,
+    multiply,
+    amountIn,
+    paths;
+  if (web3?.chainId === 137) {
+    try {
+      usdcContract = new ethers.Contract(
+        Web3.utils.toChecksumAddress(web3.network.usdc),
+        erc20.abi,
+        web3.signer
+      );
+      usdcDecimal = await usdcContract?.decimals();
+      usdcMultiply = Math.pow(10, usdcDecimal);
+      contract = new ethers.Contract(
+        Web3.utils.toChecksumAddress(token?.value[0]),
+        erc20.abi,
+        web3.signer
+      );
+      decimal = await contract?.decimals();
+      multiply = Math.pow(10, decimal);
+      amountIn = formatAmountIn(multiply, 1);
+      paths = await getPaths(
+        web3.factoryContract,
+        web3.pathList,
+        Web3.utils.toChecksumAddress(token?.value[0]),
+        Web3.utils.toChecksumAddress(web3?.network.usdc),
+        token.label,
+        "USDC"
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  let prices = [];
+  let price;
+  if (paths.length > 0 && amountIn) {
+    for (let path = 0; path < paths.length; path++) {
+      try {
+        price = await web3.routerContract.getAmountsOut(
+          amountIn,
+          paths[path].map((data) => data.address)
+        );
+        const otherPrice = Number(price[price.length - 1] / usdcMultiply);
+        prices.push(otherPrice);
+      } catch (error) {
+        console.error("getAmountsOut: ", error);
+        continue;
+      }
+    }
+  }
+
+  price = arrayMax(prices);
+  return price;
+};
+
+const getBothPaths = async (web3, token) => {
+  const usdcContract = new ethers.Contract(
+    Web3.utils.toChecksumAddress(web3.network.usdc),
+    erc20.abi,
+    web3.signer
+  );
+  const usdcDecimal = await usdcContract.decimals();
+  const usdcMultiply = Math.pow(10, usdcDecimal);
+  const contract = new ethers.Contract(
+    Web3.utils.toChecksumAddress(token.value[0]),
+    erc20.abi,
+    web3.signer
+  );
+  const decimal = await contract.decimals();
+  const multiply = Math.pow(10, decimal);
+  const amountIn = formatAmountIn(multiply, 1);
+  const sellPaths = await getPaths(
+    web3.factoryContract,
+    web3.pathList,
+    Web3.utils.toChecksumAddress(token.value[0]),
+    Web3.utils.toChecksumAddress(web3.network.usdc),
+    token.label,
+    "USDC"
+  );
+  const buyPaths = await getPaths(
+    web3.factoryContract,
+    web3.pathList,
+    Web3.utils.toChecksumAddress(web3.network.usdc),
+    Web3.utils.toChecksumAddress(token.value[0]),
+    "USDC",
+    token.label
+  );
+  let prices = [];
+  let price;
+  for (let i = 0; i < sellPaths.length; i++) {
+    try {
+      price = await web3.routerContract.getAmountsOut(
+        amountIn,
+        sellPaths[i].map((data) => data.address)
+      );
+      const otherPrice = Number(price[price.length - 1] / usdcMultiply);
+      prices.push(otherPrice);
+    } catch (error) {
+      console.error("getAmountsOut: ", error);
+      continue;
+    }
+  }
+  price = arrayMax(prices);
+  const bestSellPath = sellPaths[prices.indexOf(price)];
+  prices = [];
+  for (let i = 0; i < sellPaths.length; i++) {
+    try {
+      price = await web3.routerContract.getAmountsOut(
+        amountIn,
+        sellPaths[i].map((data) => data.address)
+      );
+      const otherPrice = Number(price[price.length - 1] / multiply);
+      prices.push(otherPrice);
+    } catch (error) {
+      console.error("getAmountsOut: ", error);
+      continue;
+    }
+  }
+  price = arrayMax(prices);
+  const bestBuyPath = buyPaths[prices.indexOf(price)];
+  return { bestBuyPath, bestSellPath };
 };
 
 const getUserData = async (msg) => {
@@ -196,6 +394,10 @@ const getPaths = async (
   return paths;
 };
 
+const toChecksumAddress = (address) => {
+  return Web3.utils.toChecksumAddress(address);
+};
+
 const approve = async (
   baseAmount,
   baseInstance,
@@ -346,4 +548,12 @@ export {
   getBalance,
   usDollar,
   getWeb3,
+  toChecksumAddress,
+  getCurrentPrice,
+  getBothPaths,
+  sendTransaction,
+  sendEthTransaction,
+  withdrawTransaction,
+  withdrawEthTransaction,
+  getDecimals
 };
