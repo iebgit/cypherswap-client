@@ -26,7 +26,8 @@ const convertTokens = (tokenArray) => {
   return convertedArray;
 };
 
-const getDecimals = async (erc20Address, erc20, signer) => {
+const getDecimals = async (erc20Address, signer) => {
+  console.log({erc20Address, erc20, signer})
    const erc20Contract = new ethers.Contract(erc20Address, erc20.abi, signer);
 
    try {

@@ -16,7 +16,7 @@ import {
   FrameBox, Table, FrameHexagon
 } from '@arwes/core'
 import { getPost, getPostsBySearch, getCommentsById } from '../../actions/posts';
-import { getCurrentPrice, sendEthTransaction, sendTransaction, withdrawEthTransaction, withdrawTransaction } from "./../services/transactions.service"
+import { getCurrentPrice, getDecimals, sendEthTransaction, sendTransaction, withdrawEthTransaction, withdrawTransaction } from "./../services/transactions.service"
 import CommentSection from './CommentSection';
 import useStyles from './styles';
 
@@ -32,7 +32,7 @@ const Post = ({ web3 }) => {
   const [tokenBalances, setTokenBalances] = useState([])
   const [baseAmount, setBaseAmount] = useState({ send: null, withdraw: null })
   const [targetAmount, setTargetAmount] = useState({ send: null, withdraw: null })
-  const [trade, setTrade] = useState(0)
+  const [dec, setDec] = useState(18)
 
 
 
@@ -54,7 +54,9 @@ const Post = ({ web3 }) => {
 
   useEffect(() => {
     if (post && web3?.chainId == 137) {
+
       const getPrice = async () => {
+        setDec(await getDecimals(post.strategy.target, web3.signer))
         setComments(await dispatch(getCommentsById([post._id])))
         const price = await getCurrentPrice(web3, post.token)
         if (price) {
@@ -199,7 +201,7 @@ const Post = ({ web3 }) => {
         ClientStrategyAbi,
         web3.signer
       );
-      setTrade(await strategyContract.ping())
+
 
     } catch (err) { console.log(err) }
     return 0;
@@ -286,7 +288,7 @@ const Post = ({ web3 }) => {
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "5px" }}>
                   <div>
                     <div style={{ fontSize: "20px" }}>
-                      <Text as="a">
+                      <Text >
 
                         <Link to={`/creators/${post.name}`}>
                           <strong>
@@ -361,7 +363,7 @@ const Post = ({ web3 }) => {
                   </div>
                   &nbsp;
                   <div>
-                    <Text as="a">{post.token.label}: {tokenBalances?.length ? tokenBalances[1] : ""}</Text>
+                    <Text as="a">{post.token.label}: {tokenBalances?.length ? Number(tokenBalances[1]) / Math.pow(10, dec) : ""}</Text>
                     <input
                       style={{ margin: "10px 0" }}
                       name="deposit weth"
