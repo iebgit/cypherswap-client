@@ -25,6 +25,7 @@ import decode from "jwt-decode";
 import Logo from "../../images/logo.png";
 import * as actionType from "../../constants/actionTypes";
 import useStyles from "./styles";
+import { TokenStore } from "../../store/TokenStore";
 
 const Navbar = ({ web3 }) => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
@@ -47,7 +48,7 @@ const Navbar = ({ web3 }) => {
     navigate(`/swap`);
   };
 
-  const toHome = () => {
+  const toHome = async () => {
     navigate(`/home`);
   };
 

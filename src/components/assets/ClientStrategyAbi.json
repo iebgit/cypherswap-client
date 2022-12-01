@@ -22,9 +22,9 @@
 				"type": "uint8[5]"
 			},
 			{
-				"internalType": "uint128[20]",
-				"name": "_timeStamps",
-				"type": "uint128[20]"
+				"internalType": "uint256[20]",
+				"name": "_timestamps",
+				"type": "uint256[20]"
 			},
 			{
 				"internalType": "uint64",
@@ -132,6 +132,30 @@
 	{
 		"inputs": [
 			{
+				"internalType": "uint64[]",
+				"name": "fibonacci",
+				"type": "uint64[]"
+			},
+			{
+				"internalType": "uint256[]",
+				"name": "prices",
+				"type": "uint256[]"
+			}
+		],
+		"name": "getDivide",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "uint256",
 				"name": "_base",
 				"type": "uint256"
@@ -170,11 +194,6 @@
 						"type": "uint8[5]"
 					},
 					{
-						"internalType": "uint128[20]",
-						"name": "timeStamps",
-						"type": "uint128[20]"
-					},
-					{
 						"internalType": "uint64",
 						"name": "sma",
 						"type": "uint64"
@@ -193,6 +212,19 @@
 				"internalType": "struct ClientStrategy.Strategy",
 				"name": "strategy",
 				"type": "tuple"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getTimestamps",
+		"outputs": [
+			{
+				"internalType": "uint256[20]",
+				"name": "",
+				"type": "uint256[20]"
 			}
 		],
 		"stateMutability": "view",
@@ -270,9 +302,9 @@
 				"type": "uint8[5]"
 			},
 			{
-				"internalType": "uint128[20]",
-				"name": "_timeStamps",
-				"type": "uint128[20]"
+				"internalType": "uint256[20]",
+				"name": "_timestamps",
+				"type": "uint256[20]"
 			},
 			{
 				"internalType": "uint64",

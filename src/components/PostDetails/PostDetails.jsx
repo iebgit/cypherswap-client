@@ -5,6 +5,7 @@ import ClientStrategyAbi from '../assets/ClientStrategyAbi.json'
 import { ethers } from 'ethers';
 import moment from 'moment';
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import Chart from '../Swap/Chart';
 import {
   Figure,
   LoadingBars,
@@ -19,6 +20,7 @@ import { getPost, getPostsBySearch, getCommentsById } from '../../actions/posts'
 import { getCurrentPrice, getDecimals, sendEthTransaction, sendTransaction, withdrawEthTransaction, withdrawTransaction } from "./../services/transactions.service"
 import CommentSection from './CommentSection';
 import useStyles from './styles';
+import { TokenStore } from '../../store/TokenStore';
 
 const Post = ({ web3 }) => {
   const { post, posts, isLoading } = useSelector((state) => state.posts);
@@ -27,12 +29,16 @@ const Post = ({ web3 }) => {
   const navigate = useNavigate();
   const classes = useStyles();
   const { id } = useParams();
-  const [currentPrice, setCurrentPrice] = useState(0)
+  const [currentPrice, setCurrentPrice] = useState(0);
+  const [tokenData, setTokenData] = useState([])
   const [until, setUntil] = useState(0)
   const [tokenBalances, setTokenBalances] = useState([])
   const [baseAmount, setBaseAmount] = useState({ send: null, withdraw: null })
   const [targetAmount, setTargetAmount] = useState({ send: null, withdraw: null })
   const [dec, setDec] = useState(18)
+  const [activate, setActivate] = useState(false)
+  const [fibLevel, setFibLevel] = useState(null)
+  const [gotData, setGotData] = useState(false)
 
 
 
@@ -50,64 +56,97 @@ const Post = ({ web3 }) => {
 
   useEffect(() => {
     dispatch(getPost(id))
+
   }, [id]);
 
   useEffect(() => {
     if (post && web3?.chainId == 137) {
 
       const getPrice = async () => {
+
         setDec(await getDecimals(post.strategy.target, web3.signer))
         setComments(await dispatch(getCommentsById([post._id])))
         const price = await getCurrentPrice(web3, post.token)
         if (price) {
-          formatSeconds()
+
+          await formatSeconds()
           setCurrentPrice(price)
           const fib = Number(post.strategy.sma) / 1000000 > price ? post.strategy.fibs[1].map((price) => (Number(price) / 1000000).toFixed(2)) : post.strategy.fibs[0].map((price) => (Number(price) / 1000000).toFixed(2));
           setFib(fib);
           setTokenBalances(await getTokenBalances());
           await ping();
+
         }
 
 
       }
       getPrice()
     }
-  }, [post])
+  }, [post, web3, activate])
+
 
   useEffect(() => {
     let interId;
-    if (post && web3?.chainId === 137) {
+    if (!!post?.token && web3?.chainId === 137) {
+      let interval = 0
       interId = setInterval(async () => {
         if (web3?.chainId !== 137) {
 
           navigate("/home")
 
         } else {
+
+
           setComments(await dispatch(getCommentsById([post._id])))
           const price = await getCurrentPrice(web3, post.token)
           if (price) {
-            formatSeconds()
+            if (interval === 0) {
+              await addToken(post?.token.id, web3?.address)
+            }
+            interval = interval + 1
+            await formatSeconds()
             setCurrentPrice(price)
-            const fib = Number(post.strategy.sma) / 1000000 > price ? post.strategy.fibs[1].map((price) => (Number(price) / 1000000).toFixed(2)) : post.strategy.fibs[0].map((price) => (Number(price) / 1000000).toFixed(2));
+            const fib = Number(post.strategy.sma) / 1000000 > price ? post.strategy.fibs[1].map((price) => (Number(price) / 1000000).toFixed(4)) : post.strategy.fibs[0].map((price) => (Number(price) / 1000000).toFixed(2));
             setFib(fib);
+            const currentFib = getCurrentFibLevel(fib, price)
+            setFibLevel(currentFib)
             setTokenBalances(await getTokenBalances());
             await ping()
           }
 
         }
 
-      }, 2000);
-      return () => { clearInterval(interId); setCurrentPrice(0) }
+      }, 3000);
+      return () => { clearInterval(interId); setCurrentPrice(0); setTokenData([]) }
     }
   }, [post]);
 
-  useEffect(() => {
+  const getCurrentFibLevel = (fib, currentPrice) => {
+    const description = ["SMA", "0.382", "0.5", "0.618", "0.786"]
+    for (let i = 0; i < fib.length - 1; i++) {
+      if (fib[i] > currentPrice && fib[i + 1] < currentPrice) {
+        return { desc: description[i], price: fib[i], dir: false, color: "#A52A2A", fibDiv: post?.strategy?.fibDivs[i] }
+      } else if (fib[i] < currentPrice && fib[i + 1] > currentPrice) {
+        return { desc: description[i], price: fib[i], dir: true, color: "#009900", fibDiv: post?.strategy?.fibDivs[i] }
+      }
+    }
+  }
+
+  const addToken = async (id, addr) => {
     if (web3?.chainId !== 137) {
       navigate("/home")
+    } else {
+      if (!!post?.token && !!web3?.address) {
+        const data = await TokenStore.addToken(id, addr)
+        if (!!data?.id && !gotData) {
+          setTokenData([data])
+          setGotData(true)
+          setActivate(true)
 
+        }
+      }
     }
-
-  }, [web3])
+  }
 
 
   // useEffect(() => {
@@ -147,19 +186,18 @@ const Post = ({ web3 }) => {
 
       targetBalance = post.strategy.target === web3.network.primaryTokens[0].address ? await strategyContract.ethBalance() : await strategyContract.balance(post.strategy.target)
 
-    } catch (err) { console.log(err) }
+    } catch (err) { console.error(err) }
     return [Number(baseBalance), Number(targetBalance)]
   }
 
   const getNextTimestamp = async (timestamps, currentTime) => {
-    console.log(currentTime)
-    console.log(await getStrategy())
+    const ping0 = await ping()
     for (let x = 0; x < timestamps?.length - 1; x++) {
       if (Number(timestamps[x]) < currentTime && Number(timestamps[x + 1]) > currentTime) {
-        if (Number(timestamps[x]) + 3600 > currentTime) {
+        if (Number(timestamps[x]) + 3600 > currentTime && ping0) {
           return "Trade! (+ 0.1 GEM)"
         } else {
-          console.log(Number(timestamps[x]) - currentTime)
+
           return timestamps[x + 1]
         }
       }
@@ -173,11 +211,11 @@ const Post = ({ web3 }) => {
     if (nextTs === "Trade! (+ 0.1 GEM)") {
       setUntil(nextTs);
     } else {
-      console.log(nextTs)
+
       const timeUntil = nextTs - currentTime
-      console.log(timeUntil)
+
       const days = Number(moment.utc(timeUntil * 1000).format('DD')) - 1
-      console.log(days)
+
       setUntil(timeUntil ? days.toString() + ":" + moment.utc(timeUntil * 1000).format('HH:mm:ss') : "Outdated Timestamps");
     }
 
@@ -190,8 +228,10 @@ const Post = ({ web3 }) => {
         ClientStrategyAbi,
         web3.signer
       );
+      const amount = ethers.utils.parseUnits("1", '18')
+      const prices = await strategyContract.getEstimatedTargetforBase(amount, post.strategy.sellPath)
       await strategyContract.initiate()
-    } catch (err) { console.log(err) }
+    } catch (err) { console.error(err) }
   }
 
   const ping = async () => {
@@ -201,10 +241,11 @@ const Post = ({ web3 }) => {
         ClientStrategyAbi,
         web3.signer
       );
+      const ping = await strategyContract.ping()
+      return !!ping ? ping === "false" ? false : true : false;
 
-
-    } catch (err) { console.log(err) }
-    return 0;
+    } catch (err) { console.error(err) }
+    return false;
   }
 
   const getStrategy = async () => {
@@ -214,21 +255,8 @@ const Post = ({ web3 }) => {
         ClientStrategyAbi,
         web3.signer
       );
-      let timestamp = await strategyContract.timestamp()
-      timestamp = timestamp.toString()
-
-      let ping = await strategyContract.ping()
-      ping = ping.toString()
-      const strategy = await strategyContract.getStrategy()
-      const timestamps = strategy.timeStamps
-      console.log(strategy)
-      for (let x in timestamps) {
-        console.log(timestamps[x].toString())
-      }
-      console.log({ timestamp, ping })
-      console.log(post.strategy.timestamps)
-
-    } catch (err) { console.log(err) }
+      return await strategyContract.getStrategy()
+    } catch (err) { console.error(err) }
     return 0;
   }
 
@@ -241,7 +269,7 @@ const Post = ({ web3 }) => {
       );
       let timestamp = await strategyContract.timestamp()
       return timestamp.toString()
-    } catch (err) { console.log(err) }
+    } catch (err) { console.error(err) }
     return 0;
   }
 
@@ -277,18 +305,18 @@ const Post = ({ web3 }) => {
 
           <FrameCorners
             palette="primary"
-            animator={true}
+            animator={{ activate }}
             cornerLength={22}
             hover
             style={{ minWidth: "100%" }}
           >
             <div style={{ minWidth: "100%", padding: "20px", display: "flex", justifyContent: "space-between" }}>
-              <div style={{ minWidth: "50%", maxWidth: "60%" }} className={classes.section}>
+              <div style={{ minWidth: "50%", maxWidth: "50%" }} className={classes.section}>
 
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "5px" }}>
                   <div>
-                    <div style={{ fontSize: "20px" }}>
-                      <Text >
+                    <div style={{ fontSize: "25px" }}>
+                      <Text animator={{ animate: false }}>
 
                         <Link to={`/creators/${post.name}`}>
                           <strong>
@@ -303,7 +331,7 @@ const Post = ({ web3 }) => {
 
                     </small>
                   </div>
-                  <Button onClick={async () => until === "Trade! (+ 0.1 GEM)" ? await initiate() : ping()} disabled={until === "Trade! (+ 0.1 GEM)" ? false : true} size="small" palette={until === "Trade! (+ 0.1 GEM)" ? "primary" : "secondary"} FrameComponent={FrameHexagon} ><strong style={{ fontSize: '20px' }}>{until ? until : "Loading..."}</strong></Button>
+                  <Button onClick={async () => until === "Trade! (+ 0.1 GEM)" ? await initiate() : await ping()} disabled={until === "Trade! (+ 0.1 GEM)" ? false : true} size="small" palette={until === "Trade! (+ 0.1 GEM)" ? "primary" : "secondary"} FrameComponent={FrameHexagon} ><strong style={{ fontSize: '20px' }}>{until ? until : "Loading..."}</strong></Button>
                 </div>
                 <p />
                 <div>
@@ -326,12 +354,11 @@ const Post = ({ web3 }) => {
                     }, {
                       id: 1,
                       columns: [
-                        { id: 'o', data: !!fib?.length ? currentPrice > post.strategy.sma ? '$' + ((tokenBalances[1] / post.strategy.fibDivs[0]) / 1000000).toString() : '$' + ((tokenBalances[0] / post.strategy.fibDivs[0]) / 1000000).toString() : 0.00 },
-                        { id: 'p', data: !!fib?.length ? currentPrice > post.strategy.sma ? '$' + ((tokenBalances[1] / post.strategy.fibDivs[1]) / 1000000).toString() : '$' + ((tokenBalances[0] / post.strategy.fibDivs[1]) / 1000000).toString() : 0.00 },
-                        { id: 'q', data: !!fib?.length ? currentPrice > post.strategy.sma ? '$' + ((tokenBalances[1] / post.strategy.fibDivs[2]) / 1000000).toString() : '$' + ((tokenBalances[0] / post.strategy.fibDivs[2]) / 1000000).toString() : 0.00 },
-                        { id: 'r', data: !!fib?.length ? currentPrice > post.strategy.sma ? '$' + ((tokenBalances[1] / post.strategy.fibDivs[3]) / 1000000).toString() : '$' + ((tokenBalances[0] / post.strategy.fibDivs[3]) / 1000000).toString() : 0.00 },
-                        { id: 's', data: !!fib?.length ? currentPrice > post.strategy.sma ? '$' + ((tokenBalances[1] / post.strategy.fibDivs[4]) / 1000000).toString() : '$' + ((tokenBalances[0] / post.strategy.fibDivs[4]) / 1000000).toString() : 0.00 }
-                      ]
+                        { id: 'o', data: !!fib?.length ? fibLevel?.dir ? ((tokenBalances[1] / post.strategy.fibDivs[0]) / Math.pow(10, dec)).toFixed(4).toString() : '$' + ((tokenBalances[0] / post.strategy.fibDivs[0]) / 1000000).toFixed(4).toString() : 0.00 },
+                        { id: 'p', data: !!fib?.length ? fibLevel?.dir ? ((tokenBalances[1] / post.strategy.fibDivs[1]) / Math.pow(10, dec)).toFixed(4).toString() : '$' + ((tokenBalances[0] / post.strategy.fibDivs[1]) / 1000000).toFixed(4).toString() : 0.00 },
+                        { id: 'q', data: !!fib?.length ? fibLevel?.dir ? ((tokenBalances[1] / post.strategy.fibDivs[2]) / Math.pow(10, dec)).toFixed(4).toString() : '$' + ((tokenBalances[0] / post.strategy.fibDivs[2]) / 1000000).toFixed(4).toString() : 0.00 },
+                        { id: 'r', data: !!fib?.length ? fibLevel?.dir ? ((tokenBalances[1] / post.strategy.fibDivs[3]) / Math.pow(10, dec)).toFixed(4).toString() : '$' + ((tokenBalances[0] / post.strategy.fibDivs[3]) / 1000000).toFixed(4).toString() : 0.00 },
+                        { id: 's', data: !!fib?.length ? fibLevel?.dir ? ((tokenBalances[1] / post.strategy.fibDivs[4]) / Math.pow(10, dec)).toFixed(4).toString() : '$' + ((tokenBalances[0] / post.strategy.fibDivs[4]) / 1000000).toFixed(4).toString() : 0.00 },]
                     }
                     ]}
                     columnWidths={columnWidths}
@@ -341,33 +368,45 @@ const Post = ({ web3 }) => {
 
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
                   <div>
-                    <Text as="a">USDC: ${tokenBalances?.length ? tokenBalances[0] / 1000000 : ""}</Text>&nbsp;
+                    <Text as="a"><strong>USDC Balance: </strong></Text>
+                    <div>{tokenBalances?.length ? tokenBalances[0] / 1000000 : ""}</div>
                     <input
                       style={{ margin: "10px 0" }}
-                      name="deposit weth"
+                      name="deposit"
                       variant="outlined"
+                      type="number"
+                      min={0}
                       placeholder="Deposit"
                       value={baseAmount.send}
                       onChange={(e) => setBaseAmount({ ...baseAmount, send: e.target.value })}
                     />
                     <input
                       style={{ margin: "10px 0" }}
-                      name="withdraw weth"
+                      name="withdraw"
                       variant="outlined"
+                      type="number"
+                      min={0}
                       placeholder="Withdraw"
                       value={baseAmount.withdraw}
                       onChange={(e) => setBaseAmount({ ...baseAmount, withdraw: e.target.value })}
                     />
-                    <Button FrameComponent={FrameBox} palette="secondary" onClick={async () => await withdrawTransaction(post.strategy.strategyAddress, ClientStrategyAbi, post.strategy.base, baseAmount.withdraw, web3.signer)}>Withdraw</Button>
-                    <Button FrameComponent={FramePentagon} palette="primary" onClick={async () => await sendToken(baseAmount.send, post.strategy.base)}>Deposit</Button>
+                    <p />
+                    <Button disabled={!!baseAmount?.withdraw && Number(baseAmount.withdraw) > 0 ? false : true} FrameComponent={FrameBox} palette="secondary" onClick={async () => await withdrawTransaction(post.strategy.strategyAddress, ClientStrategyAbi, post.strategy.base, baseAmount.withdraw, web3.signer)}>Withdraw</Button>
+                    <Button disabled={!!baseAmount?.send && Number(baseAmount.send) > 0 ? false : true} FrameComponent={FramePentagon} palette="primary" onClick={async () => await sendToken(baseAmount.send, post.strategy.base)}>Deposit</Button>
                   </div>
                   &nbsp;
                   <div>
-                    <Text as="a">{post.token.label}: {tokenBalances?.length ? Number(tokenBalances[1]) / Math.pow(10, dec) : ""}</Text>
+                    <Text as="a"><strong>{post.token.label} Balance: </strong></Text>
+                    <div>
+                      {tokenBalances?.length ? (Number(tokenBalances[1]) / Math.pow(10, dec)).toFixed(6) : ""}
+                    </div>
+
                     <input
                       style={{ margin: "10px 0" }}
                       name="deposit weth"
                       variant="outlined"
+                      type="number"
+                      min={0}
                       placeholder="Deposit"
                       value={targetAmount.send}
                       onChange={(e) => setTargetAmount({ ...targetAmount, send: e.target.value })}
@@ -376,12 +415,15 @@ const Post = ({ web3 }) => {
                       style={{ margin: "10px 0" }}
                       name="withdraw weth"
                       variant="outlined"
+                      type="number"
+                      min={0}
                       placeholder="Withdraw"
                       value={targetAmount.withdraw}
                       onChange={(e) => setTargetAmount({ ...targetAmount, withdraw: e.target.value })}
                     />
-                    <Button FrameComponent={FrameBox} palette="secondary" onClick={async () => web3.network.primaryTokens[0].address === post.strategy.target ? await withdrawEthTransaction(post.strategy.strategyAddress, ClientStrategyAbi, targetAmount.withdraw, web3.signer) : await withdrawTransaction(post.strategy.strategyAddress, ClientStrategyAbi, post.strategy.strategyAddress, targetAmount.withdraw, web3.signer)}>Withdraw</Button>
-                    <Button FrameComponent={FramePentagon} palette="primary" onClick={async () => web3.network.primaryTokens[0].address === post.strategy.target ? await sendEth(targetAmount.send) : await sendToken(targetAmount.send, post.strategy.target)}>Deposit</Button>
+                    <p />
+                    <Button disabled={!!targetAmount?.withdraw && Number(targetAmount.withdraw) > 0 ? false : true} FrameComponent={FrameBox} palette="secondary" onClick={async () => web3.network.primaryTokens[0].address === post.strategy.target ? await withdrawEthTransaction(post.strategy.strategyAddress, ClientStrategyAbi, targetAmount.withdraw, web3.signer) : await withdrawTransaction(post.strategy.strategyAddress, ClientStrategyAbi, post.strategy.strategyAddress, targetAmount.withdraw, web3.signer)}>Withdraw</Button>
+                    <Button disabled={!!targetAmount?.send && Number(targetAmount.send) > 0 ? false : true} FrameComponent={FramePentagon} palette="primary" onClick={async () => web3.network.primaryTokens[0].address === post.strategy.target ? await sendEth(targetAmount.send) : await sendToken(targetAmount.send, post.strategy.target)}>Deposit</Button>
                   </div>
 
                 </div>
@@ -391,16 +433,41 @@ const Post = ({ web3 }) => {
 
               </div>
 
-              <div style={{ maxWidth: "30%" }}>
-                <Figure src={post.selectedFile || 'https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png'} alt={post.title} />
+              <div style={{ minWidth: "40%", }}>
+
+                {/* <Figure src={post.selectedFile || 'https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png'} alt={post.title} /> */}
+                {tokenData?.length > 0 && !!fibLevel?.price ?
+                  <>
+                    <div>
+                      <img
+                        style={{ width: "20px", height: "20px", marginRight: "5px" }}
+                        src={tokenData[0]?.image.small}
+                        alt={tokenData[0]?.name}
+                      ></img>
+                      <Text as="a" style={{ fontSize: "25px", margin: "5px" }} animator={{ animate: false }}>
+                        <strong>{tokenData[0]?.name}</strong>
+                      </Text></div>
+                    <Chart
+                      name={post?.token?.label}
+                      data={tokenData}
+                      usDollar={web3.usDollar} fibLevel={fibLevel} dir={fibLevel?.dir} price={fibLevel?.price} />
+                    <Text as="a" animator={{ animate: false }}>
+                      <strong>* NEXT ACTION: &nbsp;</strong>
+
+                    </Text>
+                    <div>
+                      <Text animator={{ animate: false }}>
+                        Trading {!fibLevel?.dir ? tokenBalances?.length ? ((tokenBalances[0] / fibLevel?.fibDiv) / 1000000).toFixed(6).toString() : '' : tokenBalances?.length ? ((tokenBalances[1] / fibLevel?.fibDiv) / Math.pow(10, dec)).toFixed(6).toString() : ''} {fibLevel?.dir ? post.token.label : "USDC"} for {!fibLevel?.dir ? post.token.label : "USDC"}
+                      </Text>
+                    </div>
+
+                  </>
+                  : <><div style={{ height: "10%" }} /><center><LoadingBars animator={true} size={1} speed={5} /></center></>
+                }
+
               </div>
-
             </div>
-
-
-
           </FrameCorners>
-
           <p />
           <Text as="h5">Live Chat</Text>
 

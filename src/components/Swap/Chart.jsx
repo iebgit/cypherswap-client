@@ -5,16 +5,19 @@ import {
   Legend,
   LineChart,
   Line,
+  ReferenceArea,
+  ReferenceLine,
   CartesianGrid,
   XAxis,
   YAxis,
   Tooltip,
 } from "recharts";
 
-const Chart = ({ data, show, tokenI, usDollar }) => {
+const Chart = ({ data, show, fibLevel, name, tokenI, usDollar }) => {
   const [formattedData, setFormattedData] = useState(null);
+  const [priceHistory, setPriceHistory] = useState([])
   const [showIndex, setShowIndex] = useState(data?.length - 1);
-  const [duration, setDuration] = useState("24hr");
+  const [duration, setDuration] = useState(null);
 
   useEffect(() => {
     changeDuration(data?.length - 1, "24hr");
@@ -37,39 +40,54 @@ const Chart = ({ data, show, tokenI, usDollar }) => {
         hr = 12;
         st = 2;
     }
-    const price = data[idx].market_data.sparkline_7d.price;
-    const newArray = [];
-    for (let x = 0; x < price.length; x += st) {
-      price[x].USD =
-        !!Number(price[x]?.USD) && price[x].USD >= 1
-          ? Number(price[x].USD).toFixed(2)
-          : price[x].USD >= 0.0001
-          ? Number(price[x].USD.toFixed(7))
-          : Number(price[x].USD).toExponential(6);
-      newArray.push(price[x]);
+    if (data?.length > 0) {
+      const price = data[idx].market_data.sparkline_7d.price;
+      const newArray = [];
+      for (let x = 0; x < price.length; x += st) {
+        price[x].USD =
+          !!Number(price[x]?.USD) && price[x].USD >= 1
+            ? Number(price[x].USD).toFixed(2)
+            : price[x].USD >= 0.0001
+              ? Number(price[x].USD.toFixed(7))
+              : Number(price[x].USD).toExponential(6);
+        newArray.push(price[x]);
+      }
+      const prices = newArray.slice(newArray.length - hr).map((p) => Number(p.USD))
+      setDuration(dur);
+      const priceExtremes = [Math.min(...prices),
+      Math.max(...prices)]
+      setPriceHistory(priceExtremes)
+      setFormattedData(newArray.slice(newArray.length - hr));
     }
-    setDuration(dur);
-    setFormattedData(newArray.slice(newArray.length - hr));
+
   };
 
   return (
     <>
-      <div className="flex flex-nowrap justify-center">
-        {data.map((t, i) => (
-          <img
-            onClick={() => {
-              changeDuration(i, duration);
-              setShowIndex(i);
-              tokenI(i);
-            }}
-            className={`m-1 h-6 w-6  ${
-              i === showIndex ? "" : "opacity-60 hover:opacity-100"
-            } cursor-pointer`}
-            src={t.image.large}
-            alt={t.symbol}
-            key={t.id}
-          ></img>
-        ))}
+      <div className={`flex flex-nowrap justify-center`}>
+        {!!fibLevel?.price ? <></> : <>
+          {
+            data.map((t, i) => (
+              <img
+                onClick={() => {
+                  changeDuration(i, duration);
+                  setShowIndex(i);
+                  if (!!tokenI) {
+                    tokenI(i)
+                  }
+                }}
+                className={`m-1 h-6 w-6  ${i === showIndex ? "" : "opacity-60 hover:opacity-100"
+                  } cursor-pointer`}
+                src={t?.image?.large}
+                alt={t?.symbol}
+                key={i}
+              ></img>
+            ))
+          }
+
+        </>}
+
+
       </div>
       <div className="flex flex-nowrap">
         <div className="mt-2 pt-5">
@@ -85,31 +103,7 @@ const Chart = ({ data, show, tokenI, usDollar }) => {
               tick={false}
               hide
               domain={
-                Math.min(data[showIndex]?.market_data.sparkline_7d.price) > 1
-                  ? [
-                      Number(
-                        Math.min(
-                          data[showIndex]?.market_data.sparkline_7d.price
-                        )
-                      ),
-                      Number(
-                        Math.max(
-                          data[showIndex]?.market_data.sparkline_7d.price
-                        )
-                      ),
-                    ]
-                  : [
-                      Number(
-                        Math.min(
-                          data[showIndex]?.market_data.sparkline_7d.price
-                        )
-                      ),
-                      Number(
-                        Math.max(
-                          data[showIndex]?.market_data.sparkline_7d.price
-                        )
-                      ),
-                    ]
+                priceHistory
               }
             />
             <Tooltip
@@ -118,7 +112,6 @@ const Chart = ({ data, show, tokenI, usDollar }) => {
               wrapperStyle={{ backgroundColor: "black" }}
               contentStyle={{ backgroundColor: "black" }}
             />
-
             <Line
               type="monotone"
               dataKey="USD"
@@ -128,38 +121,44 @@ const Chart = ({ data, show, tokenI, usDollar }) => {
                     ? "currentColor"
                     : "#e24a0f"
                   : data[showIndex]?.market_data?.price_change_percentage_7d > 0
-                  ? "currentColor"
-                  : "#e24a0f"
+                    ? "currentColor"
+                    : "#e24a0f"
               }
               strokeWidth={3}
             />
+            <ReferenceLine y={Number(fibLevel?.price)} label={{ value: `$${fibLevel?.price}`, fill: 'white' }} stroke="white" />
+
+            <ReferenceArea
+              fill={"white"}
+              fillOpacity={0.1}
+              y1={!!fibLevel?.price ? priceHistory[1] < Number(fibLevel?.price) ? priceHistory[0] : priceHistory[0] < Number(fibLevel?.price) ? Number(fibLevel?.price) : priceHistory[0] : ""}
+              y2={!!fibLevel?.price ? Number(fibLevel?.price) > priceHistory[1] ? priceHistory[1] : Number(fibLevel?.price) < priceHistory[1] ? priceHistory[1] : Number(fibLevel?.price) : ""} label={{ value: !!fibLevel?.desc ? `${fibLevel?.desc}` : "", fill: 'white' }} />
           </LineChart>
         </div>
         <div className="justify-start ml-5 mt-5 pr-2 w-36">
           <div className="text-left flex flex-nowrap ml-1">
             <strong
-              className={`${
-                duration === "24hr"
-                  ? data[showIndex]?.market_data?.price_change_24h > 0
-                    ? "currentColor"
-                    : "text-orange-600"
-                  : data[showIndex]?.market_data?.price_change_percentage_7d > 0
+              className={`${duration === "24hr"
+                ? data[showIndex]?.market_data?.price_change_24h > 0
                   ? "currentColor"
                   : "text-orange-600"
-              } text-xl`}
+                : data[showIndex]?.market_data?.price_change_percentage_7d > 0
+                  ? "currentColor"
+                  : "text-orange-600"
+                } text-xl`}
             >
               {!!data[showIndex]?.market_data?.price_change_24h
                 ? data[showIndex]?.market_data?.current_price.usd >= 1
                   ? "" +
-                    usDollar.format(
-                      data[showIndex]?.market_data?.current_price.usd
-                    )
+                  usDollar.format(
+                    data[showIndex]?.market_data?.current_price.usd
+                  )
                   : data[showIndex]?.market_data?.current_price.usd >= 0.001
-                  ? "$" +
+                    ? "$" +
                     Number(
                       data[showIndex]?.market_data?.current_price.usd
                     ).toFixed(6)
-                  : "$" +
+                    : "$" +
                     Number(
                       data[showIndex]?.market_data?.current_price.usd
                     ).toExponential(5)
@@ -170,54 +169,50 @@ const Chart = ({ data, show, tokenI, usDollar }) => {
           <div className="text-left">
             <small
               onClick={() => changeDuration(showIndex, "24hr")}
-              className={`${
-                data[showIndex]?.market_data.price_change_percentage_24h > 0
-                  ? "currentColor pl-1 font-bold "
-                  : "text-orange-600 pl-1 font-bold "
-              }  hover:text-white ${
-                duration === "24hr" ? "text-white" : ""
-              } cursor-pointer`}
+              className={`${data[showIndex]?.market_data.price_change_percentage_24h > 0
+                ? "currentColor pl-1 font-bold "
+                : "text-orange-600 pl-1 font-bold "
+                }  hover:text-white ${duration === "24hr" ? "text-white" : ""
+                } cursor-pointer`}
             >
               {!!data[showIndex]?.market_data?.price_change_percentage_24h
                 ? data[showIndex]?.market_data?.price_change_percentage_24h > 0
                   ? "\u25B2 24hr : " +
-                    Number(
-                      data[showIndex]?.market_data?.price_change_percentage_24h
-                    ).toFixed(2) +
-                    " %"
+                  Number(
+                    data[showIndex]?.market_data?.price_change_percentage_24h
+                  ).toFixed(2) +
+                  " %"
                   : "\u25BC 24hr : " +
-                    Number(
-                      data[showIndex]?.market_data?.price_change_percentage_24h
-                    ).toFixed(2) +
-                    " %"
+                  Number(
+                    data[showIndex]?.market_data?.price_change_percentage_24h
+                  ).toFixed(2) +
+                  " %"
                 : "unknown"}
             </small>
           </div>
           <div className="text-left">
             <small
               onClick={() => changeDuration(showIndex, "7d")}
-              className={`${
-                Number(
-                  data[showIndex]?.market_data?.price_change_percentage_7d
-                ) > 0
-                  ? "currentColor pl-1 font-bold"
-                  : "text-orange-600 pl-1 font-bold"
-              }  hover:text-white ${
-                duration === "7d" ? "text-white" : ""
-              } cursor-pointer`}
+              className={`${Number(
+                data[showIndex]?.market_data?.price_change_percentage_7d
+              ) > 0
+                ? "currentColor pl-1 font-bold"
+                : "text-orange-600 pl-1 font-bold"
+                }  hover:text-white ${duration === "7d" ? "text-white" : ""
+                } cursor-pointer`}
             >
               {!!data[showIndex]?.market_data?.price_change_percentage_7d
                 ? data[showIndex]?.market_data?.price_change_percentage_7d > 0
                   ? "\u25B2 7d : " +
-                    Number(
-                      data[showIndex]?.market_data?.price_change_percentage_7d
-                    ).toFixed(2) +
-                    " %"
+                  Number(
+                    data[showIndex]?.market_data?.price_change_percentage_7d
+                  ).toFixed(2) +
+                  " %"
                   : "\u25BC 7d : " +
-                    Number(
-                      data[showIndex]?.market_data?.price_change_percentage_7d
-                    ).toFixed(2) +
-                    " %"
+                  Number(
+                    data[showIndex]?.market_data?.price_change_percentage_7d
+                  ).toFixed(2) +
+                  " %"
                 : "unknown"}
             </small>
           </div>

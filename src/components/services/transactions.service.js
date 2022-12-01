@@ -27,7 +27,6 @@ const convertTokens = (tokenArray) => {
 };
 
 const getDecimals = async (erc20Address, signer) => {
-  console.log({erc20Address, erc20, signer})
    const erc20Contract = new ethers.Contract(erc20Address, erc20.abi, signer);
 
    try {
@@ -148,7 +147,7 @@ const getCurrentPrice = async (web3, token) => {
   }
   let prices = [];
   let price;
-  if (paths.length > 0 && amountIn) {
+  if (!!paths && paths?.length > 0 && amountIn) {
     for (let path = 0; path < paths.length; path++) {
       try {
         price = await web3.routerContract.getAmountsOut(

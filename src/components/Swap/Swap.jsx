@@ -563,6 +563,7 @@ const Swap = ({ web3 }) => {
   };
 
   const changeTokenName = async (i) => {
+    console.log(tokenData)
     setTokenName(`${tokenData[i].name.split(" ").slice(0, 2).join(" ")}`);
     setTokenIndex(i);
     return null;
@@ -1159,7 +1160,7 @@ const Swap = ({ web3 }) => {
             ) : (
               <Chart
                 data={tokenData}
-                show={show}
+
                 tokenI={changeTokenName}
                 usDollar={web3.usDollar}
               />

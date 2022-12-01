@@ -11,6 +11,8 @@ class TokenStoreImpl {
   }
 
   addToken = async (id, user) => {
+    let response;
+    console.log({id, user})
     const tsDiff =
       Number(new Date().getTime()) -
       Number(this.tokenIds[this.tokenIds.length - 1]?.ts);
@@ -23,8 +25,9 @@ class TokenStoreImpl {
           tokenObj[this.tokenData[i].id] = this.tokenData[i];
         }
       }
+
       try {
-        const response = await getToken(id);
+        response = await getToken(id);
         const price = response.data.market_data.sparkline_7d.price;
         const ts = moment().subtract(price.length - 1, "h");
         const fData = [];
@@ -46,8 +49,12 @@ class TokenStoreImpl {
         this.tokenData.shift();
       }
     }
-    console.log(this.tokenIds)
+    return response?.data
   };
+
+  clear = () => {
+    this.tokenData = []
+  }
 }
 
 export const TokenStore = new TokenStoreImpl();

@@ -42,6 +42,7 @@ import {
 } from "@material-ui/icons";
 import { set } from "animejs";
 import Web3 from "web3";
+import moment from "moment"
 
 const Form = ({ currentId, setCurrentId, web3 }) => {
   const fibDivs = [
@@ -71,14 +72,14 @@ const Form = ({ currentId, setCurrentId, web3 }) => {
     }),
     [options, setOptions] = useState(
       web3?.network?.tokens.slice(0, 6).map((data) => {
-        const disabled = postData.title === data[0] ? true : false;
+   
         return {
           value: [data[0], data[2]],
           label: data[3].toUpperCase(),
           image: data[1],
           name: data[2],
           id: data[4],
-          disabled,
+      
         };
       })
     );
@@ -110,12 +111,12 @@ const Form = ({ currentId, setCurrentId, web3 }) => {
     setDisable(true);
     let strategyContract, indicators, timestamps, isClient0;
     const factoryAddress0 = toChecksumAddress(
-      "0xc058aB1743436d76e60f52F424bBfFa1956A0910"
+      "0x8494096b1f9A9127480C2C545D28ED5E547c9c0E"
     );
     try {
       const prices = await getOhlc(postData.token.id, timeFrame);
       indicators = fibonacci(prices?.priceList, 6);
-      timestamps = projectTime(prices?.last, timeFrame, 20);
+      timestamps = projectTime(moment().unix(), timeFrame, 20);
     } catch (err) {
       console.error(err);
     }
@@ -330,6 +331,7 @@ const Form = ({ currentId, setCurrentId, web3 }) => {
             <div
               className="flex flex-nowrap justify-start"
               title={"Network Error!"}
+              key={token.name}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -352,18 +354,7 @@ const Form = ({ currentId, setCurrentId, web3 }) => {
             </div>
           ) : (
             <div
-              key={token}
-              onClick={
-                token === postData.token
-                  ? () => setPostData({ ...postData })
-                  : () =>
-                      setPostData({
-                        ...postData,
-                        token,
-                        title: token.name,
-                        selectedFile: token.image,
-                      })
-              }
+              key={token.value[0]}
               className=" flex flex-nowrap justify-start"
               title={token.name}
             >
@@ -373,7 +364,7 @@ const Form = ({ currentId, setCurrentId, web3 }) => {
             </div>
           )
         }
-        isOptionDisabled={(option) => option.disabled}
+
       />
       <p />
 
